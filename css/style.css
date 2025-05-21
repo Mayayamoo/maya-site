@@ -1,0 +1,322 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Courier New', monospace; /* Edgy, typewriter vibe */
+}
+
+body {
+    background: linear-gradient(45deg, #0d0d0d, #1a1a2e);
+    color: #f0f0f0;
+    line-height: 1.8;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Navigation */
+nav {
+    width: 200px;
+    padding: 30px 20px;
+    height: 100vh;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    border-right: 1px solid rgba(255, 50, 100, 0.3);
+    z-index: 1000;
+}
+
+nav h1 {
+    font-size: 1.88em;
+    color: #ff3264; /* Dynamic pink-red */
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transform: rotate(-5deg); /* Slight tilt for edge */
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    margin: 15px 0;
+    transform: translateX(-10px);
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+}
+
+nav ul li:hover {
+    transform: translateX(5px);
+}
+
+nav ul li a {
+    color: #a0a0ff;
+    text-decoration: none;
+    font-size: 1.1em;
+    text-transform: lowercase;
+    position: relative;
+}
+
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background: #ff3264;
+    transition: width 0.3s ease;
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
+
+nav ul li a:link {
+    color: rgb(160, 160, 255);
+    background-color: transparent;
+    text-decoration: none;
+    }
+    
+nav ul li a:hover {
+    color: rgb(0, 212, 249);
+    background-color: transparent;
+    }
+    
+nav ul li a:active {
+    color: yellow;
+    background-color: transparent;
+    text-decoration: underline;
+    }
+
+/* keeps the title red */ 
+nav h1 a {
+    color: #ff3264;
+    text-decoration: none;
+    }
+    
+
+.dropbtn {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #a0a0ff;
+    font-size: 1.1em;
+    padding: 0;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    color: rgb(0, 212, 249);
+}
+
+.dropbtn:focus, .dropbtn:active {
+    color: #a0a0ff;
+    outline: none;
+}
+
+.dropdown {
+    width: 100%;
+}
+
+.dropdown-content {
+    display: none;
+    position: static; /* Make dropdown part of menu flow */
+    min-width: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Match nav background */
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content a {
+    display: block;
+    color: #a0a0ff;
+    padding: 10px 0 10px 32px; /* Indent to show nesting */
+    text-decoration: none;
+    background: transparent;
+    font-size: 1.05em;
+    border-left: 3px solid transparent;
+    position: relative;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.dropdown-content a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 6px;
+    left: 32px;
+    background: #ff3264;
+    transition: width 0.3s ease;
+}
+
+.dropdown-content a:hover::after {
+    width: calc(100% - 32px);
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+/* Hamburger Menu Button */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1001;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #ff3264;
+    color: #fff;
+    font-size: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+    background: #ff3264;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 200px;
+    padding: 40px;
+    max-width: 800px;
+}
+
+.main-content h1{
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+.main-content img {
+    max-width: 70%;
+    height: auto;
+    border: 3px solid #ff3264;
+    transform: rotate(2deg); /* Subtle tilt */
+    margin-bottom: 50px;
+    display: block;
+      margin-left: auto;
+      margin-right: auto;
+}
+
+.main-content a {
+    color: rgb(0, 212, 249);
+}
+
+.main-content p {
+    font-size: 1.2em;
+    color: #d0d0ff;
+    text-align: justify;
+}
+
+
+
+
+
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    nav {
+        width: 100%;
+        height: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 0;
+        border-right: none;
+        background: rgba(0, 0, 0, 0.95);
+        overflow: hidden;
+        transition: height 0.3s ease;
+    }
+
+    nav.active {
+        height: 100vh;
+        padding: 60px 20px 20px;
+    }
+
+    nav h1 {
+        font-size: 1.5em;
+        margin: 20px 0;
+    }
+
+    nav ul li {
+        margin: 12px 0;
+        transform: none;
+        font-size: .8em;
+    }
+
+    nav ul li:hover {
+        transform: translateX(10px);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 60px 20px 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-content {
+        padding: 20px 4vw 10px 4vw;
+        max-width: 100vw;
+    }
+    .main-content h1 {
+        padding-top: 30px;
+        padding-bottom: 12px;
+        font-size: 1.1em;
+    }
+    .main-content p {
+        font-size: 1em;
+    }
+    .main-content img {
+        max-width: 100%;
+        margin-bottom: 24px;
+    }
+    nav h1 {
+        font-size: 1.1em;
+        margin: 12px 0;
+    }
+    nav ul li {
+        font-size: 0.9em;
+        margin: 8px 0;
+    }
+}
+
+@media (max-width: 400px) {
+    .main-content {
+        padding: 8px 2vw 4px 2vw;
+    }
+    .main-content h1 {
+        font-size: 1em;
+        padding-top: 18px;
+        padding-bottom: 8px;
+    }
+    nav h1 {
+        font-size: 0.95em;
+    }
+    nav ul li {
+        font-size: 0.8em;
+        margin: 6px 0;
+    }
+    .menu-toggle {
+        font-size: 1.1em;
+        padding: 4px 8px;
+    }
+}
