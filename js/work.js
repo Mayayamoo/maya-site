@@ -1,3 +1,5 @@
+'use strict';
+
 // --- CSV Import for Timeline Events ---
 // Usage: place timelineEvents.csv in the same directory as work.js or adjust the path below.
 // CSV columns: id,title,company,date,nodeOffset,description,image,icon,color,branch
@@ -216,7 +218,6 @@ async function initTimeline() {
         timelineEvents.forEach((event, i) => { event.chronologicalIndex = i; });
         computeTimelinePositions(); // <-- This is required to set event.position for rendering
         createTimelineElements();
-        renderMinimap();
         renderTimelineTOC();
         // Hide loading overlay
         const overlay = document.getElementById('timeline-loading-overlay');
@@ -352,12 +353,12 @@ function createTimelineElements() {
         const event = timelineEvents[index];
         const dotPosition = createTimelineDot(event.position);
         const nodeX = Math.max(0, Math.min(pos.nodeX, 1000 - nodeDiameter));
-        const nodeY = Math.max(0, Math.min(pos.nodeY, 1800 - nodeDiameter));
-        const node = document.createElement('div');
+        const nodeY = Math.max(0, Math.min(pos.nodeY, 1800 - nodeDiameter));        const node = document.createElement('div');
         node.className = 'timeline-node';
         node.style.left = `${nodeX}px`;
         node.style.top = `${nodeY}px`;
         node.dataset.index = index;
+        node.dataset.id = event.id; // Add data-id attribute for TOC navigation
         node.tabIndex = 0;
         node.setAttribute('role', 'button');
         node.setAttribute('aria-label', `${event.title}, ${event.date}`);
@@ -404,10 +405,11 @@ function createTimelineElements() {
                 showTimelineDetailByIndex(index);
                 updateProgressBar();
             }
-        });
-        node.addEventListener('click', () => {
+        });        node.addEventListener('click', () => {
             showTimelineDetailByIndex(index);
             updateProgressBar();
+            // Update TOC active state
+            updateTocActiveState(event.id);
         });
         const tooltip = document.createElement('div');
         tooltip.className = 'node-tooltip';
@@ -425,6 +427,10 @@ function showTimelineDetailByIndex(index) {
     const event = timelineEvents[index];
     // Debug: print navigation action
     console.log('showTimelineDetailByIndex', index, event.title, event.date, event.realStartDate);
+    
+    // Update TOC active state
+    updateTocActiveState(event.id);
+    
     // Remove any existing detail
     const existingDetail = document.querySelector('.timeline-detail');
     if (existingDetail) {
@@ -502,8 +508,25 @@ function setupTimelineNavigation() {
     const prevBtn = document.querySelector('.timeline-nav-btn[data-direction="prev"]');
     const nextBtn = document.querySelector('.timeline-nav-btn[data-direction="next"]');
     
-    prevBtn.addEventListener('click', () => showTimelineDetailByIndex((currentActiveNodeIndex - 1 + timelineEvents.length) % timelineEvents.length));
-    nextBtn.addEventListener('click', () => showTimelineDetailByIndex((currentActiveNodeIndex + 1) % timelineEvents.length));
+    if (!prevBtn || !nextBtn) {
+        console.warn('Timeline navigation buttons not found');
+        return;
+    }
+    
+    // Remove hidden attribute to make buttons visible
+    prevBtn.removeAttribute('hidden');
+    nextBtn.removeAttribute('hidden');
+    
+    // Add event listeners for navigation
+    prevBtn.addEventListener('click', () => {
+        const newIndex = (currentActiveNodeIndex - 1 + timelineEvents.length) % timelineEvents.length;
+        showTimelineDetailByIndex(newIndex);
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        const newIndex = (currentActiveNodeIndex + 1) % timelineEvents.length;
+        showTimelineDetailByIndex(newIndex);
+    });
     
     // Initialize progress bar
     updateProgressBar();
@@ -560,58 +583,6 @@ function initPathParticle() {
     animateParticle();
 }
 
-// --- Minimap Rendering ---
-function renderMinimap() {
-    const minimapSvg = document.querySelector('.timeline-minimap-svg');
-    const minimapCurve = document.getElementById('minimap-curve');
-    minimapCurve.setAttribute('d', generatePath());
-    minimapSvg.querySelectorAll('.minimap-dot').forEach(dot => dot.remove());
-    timelineEvents.forEach((event, idx) => {
-        const path = minimapCurve;
-        const pathLength = path.getTotalLength();
-        const point = path.getPointAtLength(pathLength * event.position);
-        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        dot.setAttribute('cx', point.x);
-        dot.setAttribute('cy', point.y);
-        dot.setAttribute('r', 5);
-        dot.classList.add('minimap-dot');
-        if (idx === currentActiveNodeIndex) dot.classList.add('active');
-        minimapSvg.appendChild(dot);
-    });
-    // Draw viewport box
-    let viewport = minimapSvg.querySelector('.minimap-viewport');
-    if (!viewport) {
-        viewport = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        viewport.classList.add('minimap-viewport');
-        minimapSvg.appendChild(viewport);
-    }
-    // Calculate visible area based on window scroll and timeline-container position
-    const container = document.querySelector('.timeline-container');
-    const containerRect = container.getBoundingClientRect();
-    const docScrollY = window.scrollY || window.pageYOffset;
-    const containerTop = containerRect.top + docScrollY;
-    const containerHeight = container.offsetHeight;
-    const minimapHeight = minimapSvg.height.baseVal.value;
-    // The visible part of the timeline (in px, relative to container)
-    const winH = window.innerHeight;
-    const visibleStart = Math.max(0, docScrollY - containerTop);
-    const visibleEnd = Math.min(containerHeight, visibleStart + winH);
-    // Scale to minimap
-    const scaleY = minimapHeight / containerHeight;
-    const y1 = visibleStart * scaleY;
-    const y2 = visibleEnd * scaleY;
-    viewport.setAttribute('x', 0);
-    viewport.setAttribute('y', y1);
-    viewport.setAttribute('width', minimapSvg.width.baseVal.value);
-    viewport.setAttribute('height', Math.max(0, y2 - y1));
-}
-
-window.addEventListener('scroll', renderMinimap);
-window.addEventListener('resize', renderMinimap);
-window.addEventListener('load', renderMinimap);
-// Call renderMinimap after timeline is rendered
-setTimeout(renderMinimap, 300);
-
 // Function to close detail view
 function closeDetail() {
     const detail = document.querySelector('.timeline-detail');
@@ -633,53 +604,228 @@ function closeDetail() {
     }
 }
 
-// --- Timeline Table of Contents Sidebar ---
+// --- Timeline Table of Contents ---
 function renderTimelineTOC() {
-    const sidebar = document.getElementById('timeline-toc-sidebar');
-    if (!sidebar) return;
-    // Group events by year
-    const yearMap = {};
+    const tocContainer = document.querySelector('.timeline-toc-content');
+    if (!tocContainer) return;
+    
+    // Group events by category
+    const categoryMap = {};
     timelineEvents.forEach(event => {
-        // Extract year from event.realStartDate
-        const year = event.realStartDate ? event.realStartDate.getFullYear() : 'Unknown';
-        if (!yearMap[year]) yearMap[year] = [];
-        yearMap[year].push(event);
+        // Use 'branch' field as category, or default to 'Other'
+        const category = event.branch || 'Other';
+        if (!categoryMap[category]) {
+            categoryMap[category] = {
+                name: category,
+                icon: getCategoryIcon(category),
+                events: []
+            };
+        }
+        categoryMap[category].events.push(event);
     });
-    // Sort years descending
-    const years = Object.keys(yearMap).sort((a, b) => b - a);
-    let html = '<div class="toc-title">Table of Contents</div>';
-    years.forEach(year => {
-        html += `<div class="toc-year-group"><div class="toc-year">${year}</div><ul>`;
-        yearMap[year].forEach(event => {
-            html += `<li class="toc-event" data-id="${event.id}"><span class="toc-dot" style="background:${event.color || '#ff3264'}"></span>${event.title}</li>`;
-        });
-        html += '</ul></div>';
+    
+    // Generate HTML for categories and items
+    let html = '';
+    
+    // Get sorted categories (custom order for important categories)
+    const sortedCategories = getSortedCategories(categoryMap);
+    
+    sortedCategories.forEach(category => {
+        const categoryData = categoryMap[category];
+        if (categoryData.events.length === 0) return;
+        
+        html += `
+            <div class="timeline-toc-category">
+                <div class="timeline-toc-category-header">
+                    <i class="${categoryData.icon}"></i>
+                    ${categoryData.name}
+                </div>
+                <div class="timeline-toc-items">`;
+                
+        // Sort events within category by date (most recent first)
+        categoryData.events
+            .sort((a, b) => b.realStartDate - a.realStartDate)
+            .forEach(event => {
+                const dateStr = formatTocDate(event.realStartDate);
+                html += `
+                    <div class="timeline-toc-item" data-id="${event.id}">
+                        <div class="timeline-toc-progress"></div>
+                        ${event.title}
+                        <span class="timeline-toc-date">${dateStr}</span>
+                    </div>`;
+            });
+            
+        html += `
+                </div>
+            </div>`;
     });
-    sidebar.innerHTML = html;
-    // Add click handlers
-    sidebar.querySelectorAll('.toc-event').forEach(item => {
+    
+    tocContainer.innerHTML = html;
+    
+    // Add click handlers for TOC items
+    tocContainer.querySelectorAll('.timeline-toc-item').forEach(item => {
         item.addEventListener('click', function() {
-            const id = this.getAttribute('data-id');
-            const node = document.querySelector(`.timeline-node[data-index='${id}']`);
-            if (node) {
-                node.scrollIntoView({behavior: 'smooth', block: 'center'});
-                node.classList.add('pulse-focus');
-                setTimeout(() => node.classList.remove('pulse-focus'), 1500);
-            }
+            const id = parseInt(this.getAttribute('data-id'), 10);
+            navigateToTimelineItem(id);
         });
     });
+    
+    // Add toggle functionality for TOC
+    const tocToggle = document.querySelector('.timeline-toc-toggle');
+    const tocElement = document.querySelector('.timeline-toc');
+    
+    if (tocToggle && tocElement) {
+        tocToggle.addEventListener('click', function() {
+            tocElement.classList.toggle('timeline-toc-minimize');
+            this.querySelector('i').classList.toggle('fa-chevron-up');
+            this.querySelector('i').classList.toggle('fa-chevron-down');
+        });
+    }
+}
+
+// Navigate to a specific timeline item by ID
+function navigateToTimelineItem(id) {
+    const itemIndex = timelineEvents.findIndex(event => event.id === id);
+    if (itemIndex >= 0) {
+        currentActiveNodeIndex = itemIndex;
+        showTimelineDetailByIndex(itemIndex);
+        
+        // Highlight the node
+        const node = document.querySelector(`.timeline-node[data-id='${id}']`);
+        if (node) {
+            // Ensure the node is visible
+            node.scrollIntoView({behavior: 'smooth', block: 'center'});
+            
+            // Add a pulse effect
+            node.classList.add('pulse-focus');
+            setTimeout(() => node.classList.remove('pulse-focus'), 1500);
+        }
+        
+        // Update progress bar
+        updateProgressBar();
+    }
+}
+
+// Update active state in TOC based on current node
+function updateTocActiveState(id) {
+    // Remove active class from all items
+    document.querySelectorAll('.timeline-toc-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Add active class to current item
+    const activeItem = document.querySelector(`.timeline-toc-item[data-id='${id}']`);
+    if (activeItem) {
+        activeItem.classList.add('active');
+        
+        // Ensure active item is visible in scroll container
+        const tocContainer = document.querySelector('.timeline-toc-content');
+        if (tocContainer) {
+            const itemTop = activeItem.offsetTop;
+            const containerScrollTop = tocContainer.scrollTop;
+            const containerHeight = tocContainer.clientHeight;
+            
+            if (itemTop < containerScrollTop || itemTop > containerScrollTop + containerHeight) {
+                tocContainer.scrollTo({
+                    top: itemTop - containerHeight / 2,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }
+}
+
+// Get appropriate icon for category
+function getCategoryIcon(category) {
+    const categoryIcons = {
+        'Work': 'fas fa-briefcase',
+        'Education': 'fas fa-graduation-cap',
+        'Projects': 'fas fa-code-branch',
+        'Personal': 'fas fa-user',
+        'Travel': 'fas fa-plane',
+        'Politics': 'fas fa-landmark',
+        'Advocacy': 'fas fa-bullhorn',
+        'Research': 'fas fa-microscope',
+        'Technology': 'fas fa-laptop-code',
+        'Creative': 'fas fa-paint-brush',
+        'Media': 'fas fa-photo-video',
+        'Writing': 'fas fa-pen-fancy'
+    };
+    
+    return categoryIcons[category] || 'fas fa-star';
+}
+
+// Get sorted category names (custom order for important categories)
+function getSortedCategories(categoryMap) {
+    // Define priority categories in desired order
+    const priorityOrder = [
+        'Work', 'Politics', 'Education', 'Projects', 'Technology', 
+        'Advocacy', 'Media', 'Creative', 'Research', 'Writing', 'Personal', 'Travel'
+    ];
+    
+    // Get all category names
+    const allCategories = Object.keys(categoryMap);
+    
+    // Sort categories: priority categories first in specified order, then others alphabetically
+    return allCategories.sort((a, b) => {
+        const aIndex = priorityOrder.indexOf(a);
+        const bIndex = priorityOrder.indexOf(b);
+        
+        // If both are in priority list, sort by priority order
+        if (aIndex >= 0 && bIndex >= 0) {
+            return aIndex - bIndex;
+        }
+        
+        // If only a is in priority list, a comes first
+        if (aIndex >= 0) return -1;
+        
+        // If only b is in priority list, b comes first
+        if (bIndex >= 0) return 1;
+        
+        // If neither is in priority list, sort alphabetically
+        return a.localeCompare(b);
+    });
+}
+
+// Format date for TOC display
+function formatTocDate(date) {
+    if (!date) return '';
+    
+    const now = new Date();
+    const isCurrentYear = date.getFullYear() === now.getFullYear();
+    
+    // For current year, just show month
+    if (isCurrentYear) {
+        return date.toLocaleDateString('en-US', { month: 'short' });
+    }
+    
+    // For other years, show year
+    return date.getFullYear().toString();
 }
 
 // Initialize the path on load
 window.addEventListener('load', () => {
-    // Generate and set the path
-    const pathData = generatePath();
-    timelinePath.setAttribute('d', pathData);
-    
-    // Create timeline elements once the path is set
-    setTimeout(() => {
-        initTimeline();
-    }, 100);
+    try {
+        console.log('Initializing timeline...');
+        const pathData = generatePath();
+        
+        if (timelinePath) {
+            timelinePath.setAttribute('d', pathData);
+            
+            // Create timeline elements once the path is set
+            setTimeout(() => {
+                try {
+                    initTimeline();
+                    // Add this line to initialize mobile view when needed
+                    handleResponsiveTimeline();
+                } catch (error) {
+                    console.error('Error initializing timeline:', error);
+                }
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Error initializing timeline path:', error);
+    }
 });
 
 function minDistanceToPath(x, y, path, steps = 12) {
@@ -695,3 +841,288 @@ function minDistanceToPath(x, y, path, steps = 12) {
     }
     return minDist;
 }
+
+// --- Timeline Table of Contents ---
+function renderTimelineTOC() {
+    const tocContainer = document.querySelector('.timeline-toc-content');
+    if (!tocContainer) return;
+      // Group events by category
+    const categoryMap = {};
+    timelineEvents.forEach(event => {
+        // Determine category based on icon (not branch which is empty)
+        let category = 'Other';
+        if (event.icon === 'fas fa-suitcase') category = 'Work';
+        else if (event.icon === 'fas fa-cogs') category = 'Experiences';
+        else if (event.icon === 'fas fa-user-alt') category = 'Personal Projects';
+        else if (event.icon === 'fas fa-star') category = 'Highlights';
+        
+        if (!categoryMap[category]) {
+            categoryMap[category] = {
+                name: category,
+                icon: getCategoryIcon(category),
+                color: getCategoryColor(category, event.color),
+                events: []
+            };
+        }
+        categoryMap[category].events.push(event);
+    });
+    
+    // Generate HTML for categories and items
+    let html = '';
+    
+    // Get sorted categories (custom order for important categories)
+    const sortedCategories = getSortedCategories(categoryMap);
+    
+    sortedCategories.forEach(category => {
+        const categoryData = categoryMap[category];
+        if (categoryData.events.length === 0) return;
+          html += `
+            <div class="timeline-toc-category">
+                <div class="timeline-toc-category-header">
+                    <i class="${categoryData.icon}" style="color: ${categoryData.color}"></i>
+                    ${categoryData.name}
+                </div>
+                <div class="timeline-toc-items" style="border-left: 1px dashed ${categoryData.color}40">`;
+                // Sort events within category by date (most recent first)
+        categoryData.events
+            .sort((a, b) => b.realStartDate - a.realStartDate)
+            .forEach(event => {
+                const dateStr = formatTocDate(event.realStartDate);                html += `
+                    <div class="timeline-toc-item" data-id="${event.id}" style="border-left-color: ${event.color || categoryData.color}">
+                        <div class="timeline-toc-progress" style="background: linear-gradient(to bottom, ${event.color || categoryData.color}, transparent)"></div>
+                        ${event.title}
+                        <span class="timeline-toc-date">${dateStr}</span>
+                    </div>`;
+            });
+            
+        html += `
+                </div>
+            </div>`;
+    });
+    
+    tocContainer.innerHTML = html;
+    
+    // Add click handlers for TOC items
+    tocContainer.querySelectorAll('.timeline-toc-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const id = parseInt(this.getAttribute('data-id'), 10);
+            navigateToTimelineItem(id);
+        });
+    });
+    
+    // Add toggle functionality for TOC
+    const tocToggle = document.querySelector('.timeline-toc-toggle');
+    const tocElement = document.querySelector('.timeline-toc');
+    
+    if (tocToggle && tocElement) {
+        tocToggle.addEventListener('click', function() {
+            tocElement.classList.toggle('timeline-toc-minimize');
+            this.querySelector('i').classList.toggle('fa-chevron-up');
+            this.querySelector('i').classList.toggle('fa-chevron-down');
+        });
+    }
+}
+
+// Navigate to a specific timeline item by ID
+function navigateToTimelineItem(id) {
+    const itemIndex = timelineEvents.findIndex(event => event.id === id);
+    if (itemIndex >= 0) {
+        currentActiveNodeIndex = itemIndex;
+        showTimelineDetailByIndex(itemIndex);
+        
+        // Highlight the node
+        const node = document.querySelector(`.timeline-node[data-id='${id}']`);
+        if (node) {
+            node.scrollIntoView({behavior: 'smooth', block: 'center'});
+            node.classList.add('pulse-focus');
+            setTimeout(() => node.classList.remove('pulse-focus'), 1500);
+        }
+    }
+}
+
+// Update active state in TOC based on current node
+function updateTocActiveState(id) {
+    try {
+        // Get the current event
+        const event = timelineEvents.find(e => e.id === id);
+        if (!event) return;
+        
+        // Remove active class from all items
+        document.querySelectorAll('.timeline-toc-item').forEach(item => {
+            item.classList.remove('active');
+            const progress = item.querySelector('.timeline-toc-progress');
+            if (progress) progress.style.height = '0%';
+        });
+        
+        // Add active class to current item
+        const activeItem = document.querySelector(`.timeline-toc-item[data-id='${id}']`);
+        if (activeItem) {
+            activeItem.classList.add('active');
+            
+            // Animate progress bar
+            const progress = activeItem.querySelector('.timeline-toc-progress');
+            if (progress) {
+                setTimeout(() => {
+                    progress.style.height = '100%';
+                }, 50);
+            }
+            
+            // Ensure active item is visible in scroll container
+            const tocContainer = document.querySelector('.timeline-toc-content');
+            if (tocContainer) {
+                const itemTop = activeItem.offsetTop;
+                const containerScrollTop = tocContainer.scrollTop;
+                const containerHeight = tocContainer.clientHeight;
+                
+                if (itemTop < containerScrollTop || itemTop > containerScrollTop + containerHeight) {
+                    tocContainer.scrollTo({
+                        top: itemTop - containerHeight / 2,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error updating TOC active state:', error);
+    }
+}
+
+// Get appropriate icon for category
+function getCategoryIcon(category) {
+    const categoryIcons = {
+        'Work': 'fas fa-suitcase',
+        'Experiences': 'fas fa-cogs',
+        'Personal Projects': 'fas fa-user-alt',
+        'Highlights': 'fas fa-star'
+    };
+    
+    return categoryIcons[category] || 'fas fa-star';
+}
+
+// Get color for category (based on the typical color used in nodes)
+function getCategoryColor(category, fallbackColor) {
+    const categoryColors = {
+        'Work': '#d17aff',
+        'Experiences': '#50dd90',
+        'Personal Projects': '#ff7a7a',
+        'Highlights': '#ff3264'
+    };
+    
+    return categoryColors[category] || fallbackColor || '#ff3264';
+}
+
+// Get sorted category names (custom order for important categories)
+function getSortedCategories(categoryMap) {
+    // Define priority categories in desired order
+    const priorityOrder = [
+        'Highlights', 'Work', 'Experiences', 'Personal Projects'
+    ];
+    
+    // Get all category names
+    const allCategories = Object.keys(categoryMap);
+    
+    // Sort categories: priority categories first in specified order, then others alphabetically
+    return allCategories.sort((a, b) => {
+        const aIndex = priorityOrder.indexOf(a);
+        const bIndex = priorityOrder.indexOf(b);
+        
+        // If both are in priority list, sort by priority order
+        if (aIndex >= 0 && bIndex >= 0) {
+            return aIndex - bIndex;
+        }
+        
+        // If only a is in priority list, a comes first
+        if (aIndex >= 0) return -1;
+        
+        // If only b is in priority list, b comes first
+        if (bIndex >= 0) return 1;
+        
+        // If neither is in priority list, sort alphabetically
+        return a.localeCompare(b);
+    });
+}
+
+// Format date for TOC display
+function formatTocDate(date) {
+    if (!date) return '';
+    
+    const now = new Date();
+    const isCurrentYear = date.getFullYear() === now.getFullYear();
+    
+    // For current year, just show month
+    if (isCurrentYear) {
+        return date.toLocaleDateString('en-US', { month: 'short' });
+    }
+    
+    // For other years, show year
+    return date.getFullYear().toString();
+}
+
+// Responsive Timeline Handling
+function handleResponsiveTimeline() {
+    const isMobile = window.innerWidth <= 768;
+    const timelineSvg = document.querySelector('.timeline-svg');
+    const timelineContainer = document.querySelector('.timeline-container');
+    
+    if (isMobile) {
+        // Switch to vertical mobile layout
+        timelineContainer.classList.add('mobile-view');
+        
+        // Clear any existing nodes and create vertical layout
+        document.querySelectorAll('.timeline-node').forEach(node => node.remove());
+        document.querySelectorAll('.node-connector').forEach(connector => connector.remove());
+        
+        // Create mobile nodes - vertical stack
+        timelineEvents.forEach((event, index) => {
+            const mobileNode = createMobileTimelineNode(event, index);
+            timelineContainer.appendChild(mobileNode);
+        });
+        
+        // Hide SVG path on mobile
+        if (timelineSvg) timelineSvg.style.display = 'none';
+    } else {
+        // Restore desktop view
+        timelineContainer.classList.remove('mobile-view');
+        if (timelineSvg) timelineSvg.style.display = 'block';
+        
+        // Recreate desktop timeline
+        createTimelineElements();
+    }
+}
+
+// New function to create mobile-friendly timeline nodes
+function createMobileTimelineNode(event, index) {
+    const node = document.createElement('div');
+    node.className = 'timeline-node mobile-node';
+    node.dataset.index = index;
+    node.dataset.id = event.id;
+    
+    node.innerHTML = `
+        <div class="mobile-node-content">
+            <div class="mobile-node-date">${event.date}</div>
+            <div class="mobile-node-header">
+                <h3 class="node-title">${event.title}</h3>
+                <div class="node-company">${event.company}</div>
+            </div>
+            <div class="mobile-node-image">
+                <img src="${event.image}" alt="${event.title}" onerror="this.src='assets/Piano.png'; this.onerror=null;">
+            </div>
+            <div class="mobile-node-description">
+                ${event.description ? event.description.substring(0, 100) + '...' : ''}
+                <button class="mobile-view-more">Read More</button>
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners
+    node.addEventListener('click', () => {
+        showTimelineDetailByIndex(index);
+    });
+    
+    return node;
+}
+
+// Add to window resize event
+window.addEventListener('resize', function() {
+    handleResponsiveTimeline();
+});
