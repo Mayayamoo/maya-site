@@ -114,6 +114,78 @@ nav h1 a {
     color: #ff3264; /* Dynamic pink-red */
     text-decoration: none;
 }
+
+.dropbtn {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #a0a0ff;
+    font-size: 1.1em;
+    padding: 0;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    color: rgb(0, 212, 249);
+}
+
+.dropbtn:focus, .dropbtn:active {
+    color: #a0a0ff;
+    outline: none;
+}
+
+.dropdown {
+    width: 100%;
+}
+
+.dropdown-content {
+    display: none;
+    position: static; /* Make dropdown part of menu flow */
+    min-width: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Match nav background */
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content a {
+    display: block;
+    color: #a0a0ff;
+    padding: 10px 0 10px 32px; /* Indent to show nesting */
+    text-decoration: none;
+    background: transparent;
+    font-size: 1.05em;
+    border-left: 3px solid transparent;
+    position: relative;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.dropdown-content a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 6px;
+    left: 32px;
+    background: #ff3264;
+    transition: width 0.3s ease;
+}
+
+.dropdown-content a:hover::after {
+    width: calc(100% - 32px);
+}
+
+.dropdown-content.show {
+    display: block;
+}
     
 /* Hamburger Menu Button */
 .menu-toggle {
@@ -140,6 +212,14 @@ nav h1 a {
     margin-left: 200px;
     padding: 40px;
     position: relative;
+}
+
+/* Make all paragraph text in main content white for better legibility */
+.main-content p {
+    color: #ffffff;
+    margin-bottom: 15px;
+    line-height: 1.8;
+    font-size: 1.05em;
 }
 
 /* Enhanced title with glow effect */
@@ -174,6 +254,102 @@ nav h1 a {
     margin: 0 auto;
     /* Center horizontally */
     box-sizing: content-box;
+    overflow: visible;
+}
+
+/* Mobile Timeline Styles */
+.timeline-container.mobile-view {
+    width: 100%;
+    height: auto;
+    min-width: unset;
+    min-height: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mobile-node {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 500px;
+    margin: 15px 0;
+    border-radius: 10px;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    border-left: 5px solid #ff3264; /* Use event.color for dynamic colors */
+    border-radius: 8px;
+    overflow: visible;
+    background: rgba(10, 10, 20, 0.8);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    padding: 0;
+}
+
+.mobile-node-content {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.mobile-node-date {
+    background: rgba(0, 0, 0, 0.4);
+    color: #a0a0ff;
+    font-size: 0.8em;
+    padding: 4px 10px;
+    border-radius: 12px;
+    align-self: flex-start;
+    margin-bottom: 8px;
+}
+
+.mobile-node-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.mobile-node .node-title {
+    font-size: 1.2em;
+    margin: 0 0 5px 0;
+    color: #ffff00;
+}
+
+.node-company {
+    font-size: 0.9em;
+    color: #fff;
+}
+
+.mobile-node-image {
+    width: 100%;
+    height: 140px;
+    margin: 8px 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.mobile-node-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mobile-node-description {
+    font-size: 0.9em;
+    color: #d0d0ff;
+    line-height: 1.5;
+    margin-top: 8px;
+}
+
+.mobile-view-more {
+    background: #ff3264;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    margin-top: 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    cursor: pointer;
 }
 
 /* Timeline Path */
@@ -196,8 +372,14 @@ nav h1 a {
 .timeline-line {
     fill: none;
     stroke: #ff3264;
-    stroke-width: 4;
+    stroke-width: 6;
     stroke-dasharray: 15,10;
+    filter: drop-shadow(0 0 4px rgba(255, 50, 100, 0.7));
+}
+
+/* Path particle styles */
+#path-particle {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 0, 0.9));
 }
 
 /* Enhanced timeline dots */
@@ -212,6 +394,7 @@ nav h1 a {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     transition: all 0.3s ease;
     pointer-events: auto;
+    border: 3px solid #ff3264;
 }
 
 .timeline-dot::after {
@@ -391,7 +574,10 @@ nav h1 a {
     stroke: #ff3264;
     stroke-width: 2;
     z-index: 2;
+    filter: drop-shadow(0 0 2px rgba(255, 50, 100, 0.4));
+    opacity: 0.9;
     pointer-events: none;
+    stroke-linecap: round;
 }
 
 /* Floating summary card for timeline nodes */
@@ -660,54 +846,7 @@ nav h1 a {
 }
 
 /* Timeline Minimap */
-.timeline-minimap-container {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    width: 120px;
-    height: 168px;
-    background: rgba(20,20,30,0.95);
-    border: 2px solid #ff3264;
-    border-radius: 12px;
-    z-index: 200;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.3s;
-}
-
-.timeline-minimap-svg {
-    width: 120px;
-    height: 168px;
-    display: block;
-}
-
-.minimap-line {
-    stroke: #ff3264;
-    stroke-width: 2;
-    stroke-dasharray: 6,4;
-}
-
-.minimap-dot {
-    fill: #fff;
-    stroke: #ff3264;
-    stroke-width: 1.5;
-    opacity: 0.8;
-}
-
-.minimap-dot.active {
-    fill: #ffd700;
-    stroke: #ff3264;
-    opacity: 1;
-}
-
-.minimap-viewport {
-    fill: none;
-    stroke: #ffd700;
-    stroke-width: 2;
-    stroke-dasharray: 4,2;
-}
+/* Timeline responsive design */
 
 @media (max-width: 768px) {
     .menu-toggle {
@@ -715,20 +854,20 @@ nav h1 a {
     }
 
     nav {
+        transform: translateY(-100%);
         width: 100%;
-        height: 0;
+        height: auto;
+        max-height: 100vh;
         position: fixed;
         top: 0;
         left: 0;
-        padding: 0;
+        padding-top: 60px;
         border-right: none;
         background: rgba(0, 0, 0, 0.95);
-        overflow: hidden;
-        transition: height 0.3s ease;
-    }
-
-    nav.active {
-        height: 100vh;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+    }    nav.active {
+        transform: translateY(0);
         padding: 60px 20px 20px;
     }
 

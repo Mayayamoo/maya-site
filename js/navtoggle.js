@@ -4,6 +4,12 @@ const nav = document.querySelector('nav');
 menuToggle.addEventListener('click', () => {
     nav.classList.toggle('active');
     menuToggle.textContent = nav.classList.contains('active') ? '✕' : '☰';
+    menuToggle.style.backgroundColor = nav.classList.contains('active') ? 
+        'rgba(255, 50, 100, 0.8)' : 'rgba(0, 0, 0, 0.7)';
+    menuToggle.style.color = nav.classList.contains('active') ? 
+        '#ffffff' : '#ff3264';
+    menuToggle.style.borderColor = nav.classList.contains('active') ? 
+        'rgba(255, 255, 255, 0.5)' : 'rgba(255, 50, 100, 0.5)';
 });
 
 document.querySelectorAll('nav ul li a').forEach(link => {
@@ -13,6 +19,9 @@ document.querySelectorAll('nav ul li a').forEach(link => {
         if (window.innerWidth <= 768) {
             nav.classList.remove('active');
             menuToggle.textContent = '☰';
+            menuToggle.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            menuToggle.style.color = '#ff3264';
+            menuToggle.style.borderColor = 'rgba(255, 50, 100, 0.5)';
         }
     });
 });
