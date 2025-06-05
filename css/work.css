@@ -269,12 +269,26 @@ nav h1 a {
     align-items: center;
 }
 
+/* Hide SVG path and original desktop nodes/dots/connectors in mobile view */
+.timeline-container.mobile-view .timeline-path,
+.timeline-container.mobile-view .timeline-svg,
+.timeline-container.mobile-view .timeline-dot,
+.timeline-container.mobile-view .node-connector,
+.timeline-container.mobile-view .timeline-node { /* This hides the original desktop .timeline-node */
+    display: none !important;
+}
+
+/* Ensure .mobile-node (our new mobile-specific nodes) are visible */
+.timeline-container.mobile-view .mobile-node {
+    display: flex !important; /* Use flex as .mobile-node-content uses flex direction column */
+}
+
 .mobile-node {
     position: relative !important;
-    width: 100% !important;
+    width: 95% !important; /* Adjusted width */
     height: auto !important;
-    max-width: 500px;
-    margin: 15px 0;
+    max-width: 600px; /* Adjusted max-width */
+    margin: 20px 0; /* Adjusted margin */
     border-radius: 10px;
     transform: none !important;
     left: auto !important;
@@ -283,7 +297,7 @@ nav h1 a {
     border-radius: 8px;
     overflow: visible;
     background: rgba(10, 10, 20, 0.8);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Adjusted box-shadow */
     padding: 0;
 }
 
@@ -981,7 +995,7 @@ nav h1 a {
     .main-content {
         padding: 10px 2px 2px 2px;
     }
-    .timeline-container {
+    .timeline-container:not(.mobile-view) {
         width: 100vw;
         min-width: 0;
         height: 60vh;
@@ -992,19 +1006,20 @@ nav h1 a {
         margin: 0;
         padding-bottom: 40px;
     }
-    .timeline-path,
-    .timeline-svg {
+    .timeline-container:not(.mobile-view) .timeline-path,
+    .timeline-container:not(.mobile-view) .timeline-svg {
         width: 900px;
         min-width: 600px;
         height: 60vh;
         min-height: 600px;
     }
-    .timeline-node {
+    /* This rule targets the original desktop .timeline-node */
+    .timeline-container:not(.mobile-view) .timeline-node {
         width: 60px;
         height: 60px;
         font-size: 0.8em;
     }
-    .timeline-dot {
+    .timeline-container:not(.mobile-view) .timeline-dot {
         width: 7px;
         height: 7px;
     }
@@ -1021,7 +1036,7 @@ nav h1 a {
 }
 
 @media (max-width: 400px) {
-    .timeline-container {
+    .timeline-container:not(.mobile-view) {
         width: 100vw;
         min-width: 0;
         height: 50vh;
@@ -1032,19 +1047,20 @@ nav h1 a {
         margin: 0;
         padding-bottom: 20px;
     }
-    .timeline-path,
-    .timeline-svg {
+    .timeline-container:not(.mobile-view) .timeline-path,
+    .timeline-container:not(.mobile-view) .timeline-svg {
         width: 600px;
         min-width: 300px;
         height: 50vh;
         min-height: 300px;
     }
-    .timeline-node {
+    /* This rule targets the original desktop .timeline-node */
+    .timeline-container:not(.mobile-view) .timeline-node {
         width: 40px;
         height: 40px;
         font-size: 0.7em;
     }
-    .timeline-dot {
+    .timeline-container:not(.mobile-view) .timeline-dot {
         width: 5px;
         height: 5px;
     }
