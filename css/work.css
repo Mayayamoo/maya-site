@@ -1,0 +1,1187 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Courier New', monospace; /* Edgy, typewriter vibe */
+}
+
+body {
+    background: linear-gradient(45deg, #0d0d0d, #1a1a2e);
+    color: #f0f0f0;
+    line-height: 1.8;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Enhanced background with pattern */
+.background-pattern {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #0d0d0d, #1a1a2e);
+    opacity: 0.4;
+    z-index: -1;
+    background-image: 
+        radial-gradient(circle at 25px 25px, rgba(255, 50, 100, 0.1) 2px, transparent 0),
+        radial-gradient(circle at 75px 75px, rgba(160, 160, 255, 0.1) 2px, transparent 0);
+    background-size: 100px 100px;
+}
+
+/* Navigation */
+nav {
+    width: 200px;
+    padding: 30px 20px;
+    height: 100vh;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    border-right: 1px solid rgba(255, 50, 100, 0.3);
+    z-index: 1000;
+}
+
+nav h1 {
+    font-size: 1.88em;
+    color: #ff3264; /* Dynamic pink-red */
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transform: rotate(-5deg); /* Slight tilt for edge */
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    margin: 15px 0;
+    transform: translateX(-10px);
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+}
+
+nav ul li:hover {
+    transform: translateX(5px);
+}
+
+nav ul li a {
+    color: #a0a0ff; /* Cool blue-purple */
+    text-decoration: none;
+    font-size: 1.1em;
+    text-transform: lowercase;
+    position: relative;
+}
+
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background: #ff3264;
+    transition: width 0.3s ease;
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
+
+nav ul li a:hover {
+    color: #fff;
+}
+
+nav ul li a:link {
+    color: rgb(160, 160, 255);
+    background-color: transparent;
+    text-decoration: none;
+}
+    
+nav ul li a:hover {
+    color: rgb(0, 212, 249);
+    background-color: transparent;
+}
+    
+nav ul li a:active {
+    color: yellow;
+    background-color: transparent;
+    text-decoration: underline;
+}
+    
+nav h1 a {
+    color: #ff3264; /* Dynamic pink-red */
+    text-decoration: none;
+}
+
+.dropbtn {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #a0a0ff;
+    font-size: 1.1em;
+    padding: 0;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    color: rgb(0, 212, 249);
+}
+
+.dropbtn:focus, .dropbtn:active {
+    color: #a0a0ff;
+    outline: none;
+}
+
+.dropdown {
+    width: 100%;
+}
+
+.dropdown-content {
+    display: none;
+    position: static; /* Make dropdown part of menu flow */
+    min-width: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Match nav background */
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content a {
+    display: block;
+    color: #a0a0ff;
+    padding: 10px 0 10px 32px; /* Indent to show nesting */
+    text-decoration: none;
+    background: transparent;
+    font-size: 1.05em;
+    border-left: 3px solid transparent;
+    position: relative;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.dropdown-content a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 6px;
+    left: 32px;
+    background: #ff3264;
+    transition: width 0.3s ease;
+}
+
+.dropdown-content a:hover::after {
+    width: calc(100% - 32px);
+}
+
+.dropdown-content.show {
+    display: block;
+}
+    
+/* Hamburger Menu Button */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1001;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #ff3264;
+    color: #fff;
+    font-size: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+    background: #ff3264;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 200px;
+    padding: 40px;
+    position: relative;
+}
+
+/* Make all paragraph text in main content white for better legibility */
+.main-content p {
+    color: #ffffff;
+    margin-bottom: 15px;
+    line-height: 1.8;
+    font-size: 1.05em;
+}
+
+/* Enhanced title with glow effect */
+.title {
+    color: #ff3264;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+}
+
+@keyframes glow {
+    0% { text-shadow: 0 0 5px rgba(255, 50, 100, 0.7); }
+    100% { text-shadow: 0 0 20px rgba(255, 50, 100, 0.9), 0 0 30px rgba(255, 50, 100, 0.5); }
+}
+
+.subtitle {
+    margin-bottom: 30px;
+    color: white;
+    font-style: italic;
+    font-size: 1.1em;
+}
+
+/* Timeline Container */
+.timeline-container {
+    position: relative;
+    width: 1000px;
+    height: 1800px;
+    min-width: 1000px;
+    min-height: 1800px;
+    margin: 0 auto;
+    /* Center horizontally */
+    box-sizing: content-box;
+    overflow: visible;
+}
+
+/* Mobile Timeline Styles */
+.timeline-container.mobile-view {
+    width: 100%;
+    height: auto;
+    min-width: unset;
+    min-height: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Hide SVG path and original desktop nodes/dots/connectors in mobile view */
+.timeline-container.mobile-view .timeline-path,
+.timeline-container.mobile-view .timeline-svg,
+.timeline-container.mobile-view .timeline-dot,
+.timeline-container.mobile-view .node-connector,
+.timeline-container.mobile-view .timeline-node { /* This hides the original desktop .timeline-node */
+    display: none !important;
+}
+
+/* Ensure .mobile-node (our new mobile-specific nodes) are visible */
+.timeline-container.mobile-view .mobile-node {
+    display: flex !important; /* Use flex as .mobile-node-content uses flex direction column */
+}
+
+.mobile-node {
+    position: relative !important;
+    width: 95% !important; /* Adjusted width */
+    height: auto !important;
+    max-width: 600px; /* Adjusted max-width */
+    margin: 20px 0; /* Adjusted margin */
+    border-radius: 10px;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    border-left: 5px solid #ff3264; /* Use event.color for dynamic colors */
+    border-radius: 8px;
+    overflow: visible;
+    background: rgba(10, 10, 20, 0.8);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Adjusted box-shadow */
+    padding: 0;
+}
+
+.mobile-node-content {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.mobile-node-date {
+    background: rgba(0, 0, 0, 0.4);
+    color: #a0a0ff;
+    font-size: 0.8em;
+    padding: 4px 10px;
+    border-radius: 12px;
+    align-self: flex-start;
+    margin-bottom: 8px;
+}
+
+.mobile-node-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.mobile-node .node-title {
+    font-size: 1.2em;
+    margin: 0 0 5px 0;
+    color: #ffff00;
+}
+
+.node-company {
+    font-size: 0.9em;
+    color: #fff;
+}
+
+.mobile-node-image {
+    width: 100%;
+    height: 140px;
+    margin: 8px 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.mobile-node-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mobile-node-description {
+    font-size: 0.9em;
+    color: #d0d0ff;
+    line-height: 1.5;
+    margin-top: 8px;
+}
+
+.mobile-view-more {
+    background: #ff3264;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    margin-top: 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+
+/* Timeline Path */
+.timeline-path {
+    position: absolute;
+    width: 1000px;
+    height: 1800px;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.timeline-svg {
+    width: 1000px;
+    height: 1800px;
+    display: block;
+}
+
+.timeline-line {
+    fill: none;
+    stroke: #ff3264;
+    stroke-width: 6;
+    stroke-dasharray: 15,10;
+    filter: drop-shadow(0 0 4px rgba(255, 50, 100, 0.7));
+}
+
+/* Path particle styles */
+#path-particle {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 0, 0.9));
+}
+
+/* Enhanced timeline dots */
+.timeline-dot {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    border: 3px solid #ff3264;
+}
+
+.timeline-dot::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.2; }
+    100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+}
+
+/* Enhanced timeline nodes */
+.timeline-node {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    border: 3px solid #ff3264;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 4;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform-origin: center center;
+}
+
+.timeline-node.active {
+    border-width: 4px;
+    box-shadow: 0 0 20px rgba(255, 50, 100, 0.8);
+    transform: scale(1.05);
+}
+
+.timeline-node.pulse-focus {
+    animation: node-focus-pulse 1.5s ease-out;
+}
+
+@keyframes node-focus-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 50, 100, 0.8); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 50, 100, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 50, 100, 0); }
+}
+
+.node-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.node-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.7; /* Make image darker so text is readable */
+    transition: opacity 0.3s ease;
+}
+
+.timeline-node:hover .node-image img {
+    opacity: 0.9; /* Brighten image on hover */
+}
+
+/* Node icons */
+.node-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #ff3264;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.node-icon i {
+    color: #fff;
+    font-size: 14px;
+}
+
+/* Node pulse effect */
+.node-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid #ff3264;
+    border-radius: 50%;
+    z-index: 0;
+    animation: node-pulse 3s infinite;
+    opacity: 0;
+}
+
+@keyframes node-pulse {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    70% { transform: scale(1.1); opacity: 0; }
+    100% { transform: scale(0.95); opacity: 0; }
+}
+
+.node-text-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    color: #fff;
+}
+
+.node-title {
+    font-size: 0.9em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #ffff00; /* Bright yellow for visibility */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Text shadow for better readability */
+}
+
+.node-date {
+    font-size: 0.7em;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.timeline-node:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #ff3264;
+}
+
+/* Node tooltip */
+.node-tooltip {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.timeline-node:hover .node-tooltip {
+    opacity: 1;
+}
+
+/* Node connector line */
+.node-connector {
+    stroke: #ff3264;
+    stroke-width: 2;
+    z-index: 2;
+    filter: drop-shadow(0 0 2px rgba(255, 50, 100, 0.4));
+    opacity: 0.9;
+    pointer-events: none;
+    stroke-linecap: round;
+}
+
+/* Floating summary card for timeline nodes */
+.timeline-summary-card {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%) translateY(10px);
+    min-width: 180px;
+    max-width: 260px;
+    background: rgba(30,30,40,0.98);
+    color: #fff;
+    border: 2px solid #ff3264;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    padding: 14px 18px 12px 18px;
+    z-index: 20;
+    font-size: 1em;
+    pointer-events: auto;
+    opacity: 0.97;
+    transition: opacity 0.2s, transform 0.2s;
+    text-align: left;
+    white-space: normal;
+    animation: summary-fadein 0.3s;
+}
+
+@keyframes summary-fadein {
+    from { opacity: 0; transform: translateX(-50%) translateY(30px) scale(0.95); }
+    to { opacity: 0.97; transform: translateX(-50%) translateY(10px) scale(1); }
+}
+
+.timeline-summary-card strong {
+    color: #ffdc73;
+    font-size: 1.1em;
+}
+
+.timeline-summary-card button.summary-view-btn {
+    margin-top: 8px;
+    background: #ff3264;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.timeline-summary-card button.summary-view-btn:hover {
+    background: #ffd700;
+    color: #222;
+}
+
+@media (max-width: 768px) {
+    .timeline-summary-card {
+        min-width: 120px;
+        max-width: 90vw;
+        font-size: 0.95em;
+        padding: 10px 8px 8px 8px;
+    }
+
+    /* Ensure timeline path and nodes are visible and scaled correctly on mobile */
+    .timeline-container {
+        width: 100%;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: visible;
+        position: relative;
+        padding-bottom: 40px;
+    }
+
+    .timeline-path {
+        width: 100%;
+        max-width: 400px; /* Control the maximum width */
+        height: 3600px;
+        position: relative; /* Changed from absolute for better centering */
+    }
+
+    .timeline-svg {
+        width: 100%;
+        height: 3600px;
+        display: block;
+        overflow: visible;
+    }
+
+    .timeline-line {
+        stroke-width: 4;
+    }
+
+    .timeline-dot {
+        width: 14px;
+        height: 14px;
+        border-width: 2px;
+    }
+
+    .node-connector {
+        stroke-width: 2;
+    }
+    
+    .timeline-node {
+        width: 110px !important;
+        height: 110px !important;
+        font-size: 0.85em;
+    }
+}
+
+/* Remove conflicting media queries to avoid overriding the new styles */
+@media (max-width: 900px), (max-width: 600px), (max-width: 400px) {
+    .timeline-container:not(.mobile-view) {
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .timeline-path, .timeline-svg {
+        width: 100%;
+    }
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    nav {
+        transform: translateY(-100%);
+        width: 100%;
+        height: auto;
+        max-height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 60px;
+        border-right: none;
+        background: rgba(0, 0, 0, 0.95);
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+    }    nav.active {
+        transform: translateY(0);
+        padding: 60px 20px 20px;
+    }
+
+    nav h1 {
+        font-size: 1.5em;
+        margin: 20px 0;
+    }
+
+    nav ul li {
+        margin: 12px 0;
+        transform: none;
+        font-size: .8em;
+    }
+
+    nav ul li:hover {
+        transform: translateX(10px);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px 10px 20px !important;
+        overflow-x: hidden;
+    }
+
+    .timeline-detail {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .detail-title {
+        font-size: 1.4em;
+    }
+
+    .detail-date {
+        font-size: 1em;
+        font-style: italic;
+    }
+    
+    .timeline-navigation {
+        flex-direction: column;
+    }
+    
+    .timeline-progress-container {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .detail-content {
+        gap: 20px;
+    }
+    
+    .detail-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap:10px;
+    }
+
+    .timeline-minimap-container {
+        right: 8px;
+        bottom: 8px;
+        width: 80px;
+        height: 112px;
+    }
+
+    .timeline-minimap-svg {
+        width: 80px;
+        height: 112px;
+    }
+}
+
+@media (max-width: 900px) {
+    .timeline-container {
+        width: 100vw;
+        min-width: 0;
+        height: 80vh;
+        min-height: 900px;
+        overflow-x: auto;
+        overflow-y: visible;
+        position: relative;
+        margin: 0;
+        padding-bottom: 40px;
+    }
+    .timeline-path,
+    .timeline-svg {
+        width: 1200px;
+        min-width: 900px;
+        height: 80vh;
+        min-height: 900px;
+    }
+    .timeline-node {
+        width: 90px;
+        height: 90px;
+        font-size: 0.9em;
+    }
+    .timeline-dot {
+        width: 10px;
+        height: 10px;
+    }
+    .timeline-minimap-container {
+        right: 2vw;
+        bottom: 2vw;
+        width: 60px;
+        height: 84px;
+    }
+    .timeline-minimap-svg {
+        width: 60px;
+        height: 84px;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-content {
+        padding: 10px 2px 2px 2px;
+    }
+    .timeline-container:not(.mobile-view) {
+        width: 100vw;
+        min-width: 0;
+        height: 60vh;
+        min-height: 600px;
+        overflow-x: auto;
+        overflow-y: visible;
+        position: relative;
+        margin: 0;
+        padding-bottom: 40px;
+    }
+    .timeline-container:not(.mobile-view) .timeline-path,
+    .timeline-container:not(.mobile-view) .timeline-svg {
+        width: 900px;
+        min-width: 600px;
+        height: 60vh;
+        min-height: 600px;
+    }
+    /* This rule targets the original desktop .timeline-node */
+    .timeline-container:not(.mobile-view) .timeline-node {
+        width: 60px;
+        height: 60px;
+        font-size: 0.8em;
+    }
+    .timeline-container:not(.mobile-view) .timeline-dot {
+        width: 7px;
+        height: 7px;
+    }
+    .timeline-minimap-container {
+        right: 1vw;
+        bottom: 1vw;
+        width: 40px;
+        height: 56px;
+    }
+    .timeline-minimap-svg {
+        width: 40px;
+        height: 56px;
+    }
+}
+
+@media (max-width: 400px) {
+    .timeline-container:not(.mobile-view) {
+        width: 100vw;
+        min-width: 0;
+        height: 50vh;
+        min-height: 400px;
+        overflow-x: auto;
+        overflow-y: visible;
+        position: relative;
+        margin: 0;
+        padding-bottom: 20px;
+    }
+    .timeline-container:not(.mobile-view) .timeline-path,
+    .timeline-container:not(.mobile-view) .timeline-svg {
+        width: 600px;
+        min-width: 300px;
+        height: 50vh;
+        min-height: 300px;
+    }
+    /* This rule targets the original desktop .timeline-node */
+    .timeline-container:not(.mobile-view) .timeline-node {
+        width: 40px;
+        height: 40px;
+        font-size: 0.7em;
+    }
+    .timeline-container:not(.mobile-view) .timeline-dot {
+        width: 5px;
+        height: 5px;
+    }
+    .timeline-minimap-container {
+        right: 0.5vw;
+        bottom: 0.5vw;
+        width: 24px;
+        height: 32px;
+    }
+    .timeline-minimap-svg {
+        width: 24px;
+        height: 32px;
+    }
+}
+
+/* Loading Overlay */
+#timeline-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #19192a;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s;
+}
+#timeline-loading-overlay .loading-content {
+    text-align: center;
+}
+#timeline-loading-overlay .loading-title {
+    font-family: 'Courier New', monospace;
+    font-size: 3em;
+    color: #ff3264;
+    letter-spacing: 0.08em;
+    margin-bottom: 32px;
+    text-shadow: 0 2px 16px #ff326455;
+}
+#timeline-loading-overlay .loading-spinner {
+    margin: 0 auto;
+    width: 48px;
+    height: 48px;
+    border: 5px solid #ff3264;
+    border-top: 5px solid #ffd700;
+    border-radius: 50%;
+    animation: spin 1.1s linear infinite;
+    box-shadow: 0 0 0 4px #19192a, 0 0 16px #ff3264aa;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Detail view styling improvements */
+.timeline-detail {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    background: rgba(20, 20, 35, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 0;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 50, 100, 0.2);
+}
+
+.timeline-detail.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.detail-header {
+    padding: 15px;
+    background: rgba(10, 10, 20, 0.8);
+    border-bottom: 3px solid #ff3264;
+}
+
+.detail-header-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.header-left, .header-right {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.detail-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.detail-title {
+    font-size: 1.4rem;
+    margin: 0;
+    color: white;
+    line-height: 1.3;
+}
+
+.detail-sub {
+    font-size: 0.95rem;
+    color: #32c8ff;
+    font-style: italic;
+    font-weight: normal;
+    margin-top: 3px;
+}
+
+.detail-date {
+    font-size: 0.85rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.detail-content {
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(90vh - 180px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.detail-image-container {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.detail-text {
+    flex-grow: 1;
+}
+
+.detail-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.detail-nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: rgba(10, 10, 20, 0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-nav-btn {
+    background: rgba(255, 50, 100, 0.2);
+    border: 1px solid rgba(255, 50, 100, 0.4);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-nav-btn:hover {
+    background: rgba(255, 50, 100, 0.4);
+    transform: translateY(-2px);
+}
+
+.close-detail {
+    display: none !important;
+}
+
+.overlay {
+    cursor: pointer;
+}
+
+/* Fix mobile timeline container spacing */
+@media (max-width: 768px) {
+    .timeline-container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Reduce main content top padding */
+    .main-content {
+        margin-left: 0;
+        padding: 20px 10px 20px !important;
+        overflow-x: hidden;
+    }
+    
+    /* Reduce space after title */
+    .title-glow, .subtitle {
+        margin-bottom: 10px !important;
+    }
+    
+    /* Timeline container spacing reset */
+    .timeline-container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* Remove potential extra space from SVG */
+    .timeline-svg {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Ensure mobile navigation doesn't add space */
+    .timeline-navigation {
+        margin-top: 10px !important;
+    }
+}
+
+/* Ensure overlay is properly styled to cover the entire screen */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 900;
+    display: none;
+    cursor: pointer;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* Ensure the detail panel is above the overlay */
+.timeline-detail {
+    z-index: 1000;
+}
