@@ -4,7 +4,7 @@
 // Usage: place timelineEvents.csv in the same directory as work.js or adjust the path below.
 // CSV columns: id,title,company,date,nodeOffset,description,image,icon,color,branch
 
-const now = new Date('2025-04-21');
+const now = new Date('2025-07-11');
 
 function parseCSV(csv) {
     const lines = csv.trim().split(/\r?\n/);

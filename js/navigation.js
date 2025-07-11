@@ -10,8 +10,8 @@ function loadNavigation() { //add <li><a href="arts">Movies, Music and Art</a></
                     <button class="dropbtn">endeavours</button>
                     <div class="dropdown-content">
                         <a href="endeavours">Timeline</a>
-                        <a href="contract">Contract</a>
-                        <a href="resume">resume</a>
+                        <a href="Contract">Contract</a>
+                        <a href="Resume">resume</a>
                     </div> 
                 </li>                             
                 <li><a href="https://x.com/envisionedluna">Twitter</a></li>
