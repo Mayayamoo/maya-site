@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Courier New', monospace; /* Edgy, typewriter vibe */
+    font-family: 'Courier New', monospace;
 }
 
 body {
@@ -13,7 +13,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Enhanced background with pattern */
 .background-pattern {
     position: fixed;
     top: 0;
@@ -29,7 +28,6 @@ body {
     background-size: 100px 100px;
 }
 
-/* Navigation */
 nav {
     width: 200px;
     padding: 30px 20px;
@@ -43,10 +41,10 @@ nav {
 
 nav h1 {
     font-size: 1.88em;
-    color: #ff3264; /* Dynamic pink-red */
+    color: #ff3264;
     text-transform: uppercase;
     letter-spacing: 3px;
-    transform: rotate(-5deg); /* Slight tilt for edge */
+    transform: rotate(-5deg);
     margin-bottom: 40px;
     text-align: center;
 }
@@ -67,7 +65,7 @@ nav ul li:hover {
 }
 
 nav ul li a {
-    color: #a0a0ff; /* Cool blue-purple */
+    color: #a0a0ff;
     text-decoration: none;
     font-size: 1.1em;
     text-transform: lowercase;
@@ -111,7 +109,7 @@ nav ul li a:active {
 }
     
 nav h1 a {
-    color: #ff3264; /* Dynamic pink-red */
+    color: #ff3264;
     text-decoration: none;
 }
 
@@ -148,7 +146,7 @@ nav h1 a {
     position: static; /* Make dropdown part of menu flow */
     min-width: 0;
     width: 100%;
-    background: rgba(0, 0, 0, 0.8); /* Match nav background */
+    background: rgba(0, 0, 0, 0.8);
     border: none;
     border-radius: 0;
     box-shadow: none;
@@ -159,7 +157,7 @@ nav h1 a {
 .dropdown-content a {
     display: block;
     color: #a0a0ff;
-    padding: 10px 0 10px 32px; /* Indent to show nesting */
+    padding: 10px 0 10px 32px;
     text-decoration: none;
     background: transparent;
     font-size: 1.05em;
@@ -187,7 +185,6 @@ nav h1 a {
     display: block;
 }
     
-/* Hamburger Menu Button */
 .menu-toggle {
     display: none;
     position: fixed;
@@ -207,14 +204,12 @@ nav h1 a {
     background: #ff3264;
 }
 
-/* Main Content */
 .main-content {
     margin-left: 200px;
     padding: 40px;
     position: relative;
 }
 
-/* Make all paragraph text in main content white for better legibility */
 .main-content p {
     color: #ffffff;
     margin-bottom: 15px;
@@ -222,7 +217,6 @@ nav h1 a {
     font-size: 1.05em;
 }
 
-/* Enhanced title with glow effect */
 .title {
     color: #ff3264;
     margin-bottom: 10px;
@@ -244,7 +238,6 @@ nav h1 a {
     font-size: 1.1em;
 }
 
-/* Timeline Container */
 .timeline-container {
     position: relative;
     width: 1000px;
@@ -252,12 +245,10 @@ nav h1 a {
     min-width: 1000px;
     min-height: 1800px;
     margin: 0 auto;
-    /* Center horizontally */
     box-sizing: content-box;
     overflow: visible;
 }
 
-/* Mobile Timeline Styles - Enhanced from File 1 */
 .timeline-container.mobile-view {
     width: 100%;
     height: auto;
@@ -269,26 +260,24 @@ nav h1 a {
     align-items: center;
 }
 
-/* Hide SVG path and original desktop nodes/dots/connectors in mobile view */
 .timeline-container.mobile-view .timeline-path,
 .timeline-container.mobile-view .timeline-svg,
 .timeline-container.mobile-view .timeline-dot,
 .timeline-container.mobile-view .node-connector,
-.timeline-container.mobile-view .timeline-node { /* This hides the original desktop .timeline-node */
+.timeline-container.mobile-view .timeline-node {
     display: none !important;
 }
 
-/* Ensure .mobile-node (our new mobile-specific nodes) are visible */
 .timeline-container.mobile-view .mobile-node {
-    display: flex !important; /* Use flex as .mobile-node-content uses flex direction column */
+    display: flex !important;
 }
 
 .mobile-node {
     position: relative !important;
-    width: 95% !important; /* Adjusted width from File 1 */
+    width: 95% !important;
     height: auto !important;
-    max-width: 600px; /* Adjusted max-width from File 1 */
-    margin: 20px 0; /* Adjusted margin from File 1 */
+    max-width: 600px;
+    margin: 20px 0;
     border-radius: 10px;
     transform: none !important;
     left: auto !important;

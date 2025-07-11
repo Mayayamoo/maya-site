@@ -1,13 +1,10 @@
-/* Index page specific styles - Mobile-first approach */
-
-/* Override general main-content img styles for profile image */
+/* home page stuff */
 .profile-image {
     margin-bottom: 0 !important;
     margin-top: 0 !important;
     border: none !important;
 }
 
-/* Hero Section Styles */
 .hero-section {
     display: flex;
     flex-direction: column;

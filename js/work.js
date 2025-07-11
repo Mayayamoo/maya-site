@@ -1,16 +1,13 @@
 'use strict';
 
-// --- CSV Import for Timeline Events ---
-// Usage: place timelineEvents.csv in the same directory as work.js or adjust the path below.
-// CSV columns: id,title,company,date,nodeOffset,description,image,icon,color,branch
-
+// csv stuff for timeline
 const now = new Date('2025-07-11');
 
 function parseCSV(csv) {
     const lines = csv.trim().split(/\r?\n/);
     const headers = lines[0].split(',');
     return lines.slice(1).map(line => {
-        const values = line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/); // Handles quoted commas
+        const values = line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
         const obj = {};
         headers.forEach((h, i) => {
             let v = values[i] ? values[i].replace(/^"|"$/g, '').replace(/""/g, '"') : '';
@@ -24,19 +21,16 @@ function parseCSV(csv) {
 
 async function loadTimelineEventsFromCSV(path = 'timelinedata/timelineevents.csv') {
     const res = await fetch(path);
-    if (!res.ok) throw new Error('Failed to load timelineEvents.csv');
+    if (!res.ok) throw new Error('csv file broke');
     const csv = await res.text();
     return parseCSV(csv);
 }
 
-// Replace the static timelineEvents array with dynamic loading
 let timelineEvents = [];
 let currentActiveNodeIndex = -1;
 
-// Helper: parse date string to Date object (YYYY, YYYY-MM, or YYYY-MM-DD)
 function parseEventDate(dateStr) {
     if (!dateStr) return null;
-    // Try to parse as YYYY-MM-DD, YYYY-MM, or YYYY
     const parts = dateStr.split('-');
     if (parts.length === 3) return new Date(parts[0], parts[1] - 1, parts[2]);
     if (parts.length === 2) return new Date(parts[0], parts[1] - 1, 1);
@@ -44,70 +38,56 @@ function parseEventDate(dateStr) {
     return null;
 }
 
-// Helper: parse month name to number (0-11)
 function parseMonthName(monthStr) {
-    if (!monthStr) return 0; // Default to January if no month string
+    if (!monthStr) return 0;
     const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
     const idx = months.findIndex(m => monthStr.toLowerCase().startsWith(m));
     return idx >= 0 ? idx : 0;
 }
 
-// Helper: parse date string with month names and ranges
 function parseEventStartDate(dateStr) {
     if (!dateStr) return null;
-    // Handle ranges: split on ' - '
     let start = dateStr.split(/\s*-\s*/)[0];
-    // Try to match 'Month YYYY' or 'Month, YYYY'
     let match = start.match(/([A-Za-z]+)[,]?\s*(\d{4})/);
     if (match) {
         const month = parseMonthName(match[1]);
         const year = parseInt(match[2], 10);
         return new Date(year, month, 1);
     }
-    // Try to match just a year
     match = start.match(/(\d{4})/);
     if (match) {
         return new Date(parseInt(match[1], 10), 0, 1);
     }
-    // Fallback: if 'current', 'present', etc
     if (/current|present|now/i.test(dateStr)) {
-        return new Date(now); // Use the global 'now'
+        return new Date(now);
     }
     return null;
 }
 
-// 2. Compute proportional positions based on realStartDate, and flip timeline (most recent at top)
 function computeTimelinePositions() {
-    // Find min/max date
     const dates = timelineEvents.map(e => e.realStartDate.getTime()).filter(t => !isNaN(t));
     if (dates.length === 0) {
-        timelineEvents.forEach(event => event.position = 0.5); // Default if no valid dates
+        timelineEvents.forEach(event => event.position = 0.5);
         return;
     }
     const minDate = Math.min(...dates);
     const maxDate = Math.max(...dates);
-    // Assign position (0-1) based on date, but flip so most recent is at position 0
     timelineEvents.forEach(event => {
         if (maxDate === minDate || isNaN(event.realStartDate.getTime())) {
             event.position = 0.5;
         } else {
-            // Flip: most recent (maxDate) is position 0, oldest (minDate) is position 1
             event.position = 1 - (event.realStartDate.getTime() - minDate) / (maxDate - minDate);
         }
     });
-    // Sort events so most recent is first in the array (for rendering, navigation, etc)
     timelineEvents.sort((a, b) => b.realStartDate - a.realStartDate);
 }
 
-// Generate the winding path for the timeline with proper variable declaration
 function generatePath() {
     const isMobile = window.innerWidth <= 768;
     
     if (isMobile) {
-        // Centered vertical path - using 50% of viewBox width (200 of 400)
         return "M200,0 C200,300 200,600 200,900 C200,1200 200,1500 200,1800 C200,2100 200,2400 200,2700 C200,3000 200,3300 200,3600";
     } else {
-        // Original desktop path
         return "M0,0 C50,100 100,200 200,300 C300,400 200,600 300,700 C400,800 300,1000 400,1100 C500,1200 600,1300 500,1400 C400,1500 500,1600 400,1700 C300,1800 400,1800 600,1800";
     }
 }
@@ -118,9 +98,7 @@ function updateSvgViewBox() {
     const isMobile = window.innerWidth <= 768;
     
     if (isMobile) {
-        // Mobile viewBox - centered with proper aspect ratio
         svg.setAttribute('viewBox', `0 0 400 3600`);
-        // Important: set preserveAspectRatio to maintain centering
         svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
         container.style.minHeight = '3600px';
     } else {
@@ -130,39 +108,33 @@ function updateSvgViewBox() {
     }
 }
 
-// Call updateSvgViewBox immediately and on window load
 updateSvgViewBox();
 window.addEventListener('load', updateSvgViewBox);
 
-// Get the timeline curve and container
 const timelinePath = document.getElementById('timeline-curve');
 const timelineContainer = document.querySelector('.timeline-container');
 const overlay = document.querySelector('.overlay');
 const menuToggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('nav');
-// const progressBar = document.querySelector('.timeline-progress-bar'); // progressBar seems to be missing in HTML
 
 if (menuToggle && nav) {
     menuToggle.addEventListener('click', function() {
         nav.classList.toggle('active');
-        // Hamburger icon change logic is in navtoggle.js
     });
 }
 
-// Function to get point at a specific position along a path
 function getPointAtPosition(path, position) {
     if (!path || typeof path.getTotalLength !== 'function' || path.getTotalLength() === 0) {
-        return { x: 0, y: 0 }; // Fallback
+        return { x: 0, y: 0 };
     }
     const pathLength = path.getTotalLength();
     const point = path.getPointAtLength(pathLength * position);
     return { x: point.x, y: point.y };
 }
 
-// Function to calculate the angle of the tangent at a point on the path
 function getAngleAtPosition(path, position) {
     if (!path || typeof path.getTotalLength !== 'function' || path.getTotalLength() === 0) {
-        return 0; // Fallback
+        return 0;
     }
     const pathLength = path.getTotalLength();
     const p1 = path.getPointAtLength(Math.max(0, pathLength * position - 1));
@@ -170,13 +142,12 @@ function getAngleAtPosition(path, position) {
     return Math.atan2(p2.y - p1.y, p2.x - p1.x);
 }
 
-// --- Animated Connectors ---
 function animateConnectorLine(line) {
     if (!line || typeof line.getTotalLength !== 'function') return;
     const length = line.getTotalLength();
     line.style.strokeDasharray = length;
     line.style.strokeDashoffset = length;
-    line.getBoundingClientRect(); // Force reflow
+    line.getBoundingClientRect();
     line.style.transition = 'stroke-dashoffset 1s cubic-bezier(0.77,0,0.18,1)';
     line.style.strokeDashoffset = '0';
 }
@@ -206,25 +177,19 @@ function createTimelineDot(position) {
     return dotPosition;
 }
 
-// --- SIMPLE TIMELINE NAVIGATION REWRITE ---
-// 1. After loading and sorting, assign a fixed index to each event (chronological order)
-// 2. Render nodes in order, each node gets data-index
-// 3. When a node is clicked, open detail popup for that index
-// 4. Next/Prev buttons and left/right keys increment/decrement the index and call showDetail
-// 5. No recalculation, no searching, no scroll-based index changes
+// timeline nav stuff
 
 async function initTimeline() {
     try {
         timelineEvents = await loadTimelineEventsFromCSV();
         timelineEvents.forEach(event => {
             if (typeof event.date === 'string') event.date = event.date.trim();
-            event.realStartDate = parseEventStartDate(event.date) || new Date(now); // Ensure a valid date
+            event.realStartDate = parseEventStartDate(event.date) || new Date(now);
             if (event.description) {
                 event.description = event.description.replace(/\\n|\r\\n/g, '<br>');
             }
         });
         computeTimelinePositions();
-        // createTimelineElements will be called by handleResponsiveTimeline after this
         renderTimelineTOC();
 
         const loadingOverlay = document.getElementById('timeline-loading-overlay');
@@ -235,7 +200,7 @@ async function initTimeline() {
     } catch (e) {
         console.error('Error initializing timeline:', e);
         const loadingOverlay = document.getElementById('timeline-loading-overlay');
-        if (loadingOverlay) { // Still hide loading on error
+        if (loadingOverlay) {
             loadingOverlay.style.opacity = '0';
             setTimeout(() => { loadingOverlay.style.display = 'none'; }, 500);
         }
@@ -247,16 +212,14 @@ function createTimelineElements() {
 
     const isMobile = window.innerWidth <= 768;
 
-    // Clear previous elements
+    // cleanup
     document.querySelectorAll('.timeline-dot, .timeline-node, .node-connector, .timeline-track, .timeline-entries').forEach(el => el.remove());
 
     if (isMobile) {
-        // Create the quirky-bubble-cards structure for mobile
+        // mobile bubbles
         createMobileTimelineBubbles();
     } else {
-        // Original desktop timeline creation logic
-        
-        // Adjust sizing based on viewport
+        // desktop stuff
         const nodeDiameter = 140;
         const svgWidth = 1000;
         const svgHeight = 1800;
