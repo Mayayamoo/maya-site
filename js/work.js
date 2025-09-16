@@ -115,8 +115,7 @@ function generatePath() {
     if (isMobile) {
         return "M200,0 C200,300 200,600 200,900 C200,1200 200,1500 200,1800 C200,2100 200,2400 200,2700 C200,3000 200,3300 200,3600";
     } else {
-        return "M0,0 C50,100 100,200 200,300 C300,400 200,600 300,700 C400,800 300,1000 400,1100 C500,1200 600,1300 500,1400 C400,1500 500,1600 400,1700 C300,1800 400,1800 600,1800";
-    }
+        return "M130,0 C180,100 230,200 330,300 C430,400 330,600 430,700 C530,800 430,1000 530,1100 C630,1200 730,1300 630,1400 C530,1500 630,1600 530,1700 C430,1800 530,1800 730,1800";    }
 }
 
 function updateSvgViewBox() {
@@ -242,10 +241,7 @@ async function initTimeline() {
 
 function createTimelineElements() {
     if (!timelineContainer || !timelinePath) return;
-
     const isMobile = window.innerWidth <= 768;
-
-    // cleanup
     document.querySelectorAll('.timeline-dot, .timeline-node, .node-connector, .timeline-track, .timeline-entries').forEach(el => el.remove());
 
     if (isMobile) {
@@ -254,184 +250,128 @@ function createTimelineElements() {
     } else {
         // desktop stuff
         const nodeDiameter = 140;
-        const svgWidth = 1000;
+        const svgWidth = 1400;
         const svgHeight = 1800;
 
         if (!timelinePath || typeof timelinePath.getTotalLength !== 'function' || timelinePath.getTotalLength() === 0) {
             console.error("Timeline curve not ready or not an SVG path for createTimelineElements.");
             return;
         }
-
-        // Adjust decluttering parameters for mobile
-        const numCandidates = 10;
-        const spiralMaxRadius = isMobile ? 150 : 220; // Increased for better spacing
-        const spiralStep = spiralMaxRadius / numCandidates;
-        const minPathDist = nodeDiameter / 2 + (isMobile ? 20 : 30);
-        // Increased minimum distance between nodes for mobile
-        const minDistSqNodes = Math.pow(nodeDiameter * (isMobile ? 1.2 : 0.7), 2);
-
-        const dotCache = timelineEvents.map(event => {
+        const minSpacing = 200;
+        const baseOffsetDistance = 90; 
+        const maxVerticalDeviation = 90;
+        
+        const sortedEvents = [...timelineEvents].sort((a, b) => {
+            const posA = getPointAtPosition(timelinePath, a.position);
+            const posB = getPointAtPosition(timelinePath, b.position);
+            return posA.y - posB.y;
+        });
+        
+        const placedNodes = [];
+        
+        sortedEvents.forEach((event, index) => {
             const dotPosition = getPointAtPosition(timelinePath, event.position);
+            
+            // Try to place node close to its timeline position first (PRIORITY #3)
+            const isLeftSide = index % 2 === 0; // Alternate sides for better distribution
+            
+            // Start with ideal position close to timeline point
             const angle = getAngleAtPosition(timelinePath, event.position);
+            let finalX = dotPosition.x + Math.cos(angle + Math.PI / 2) * (isLeftSide ? -baseOffsetDistance : baseOffsetDistance);
+            let finalY = dotPosition.y;
             
-            // Adjust node offset for mobile - ensure nodes are closer to center line
-            let nodeOffsetCsv = event.nodeOffset;
-            if (typeof nodeOffsetCsv !== 'number' || isNaN(nodeOffsetCsv)) {
-                nodeOffsetCsv = isMobile ? 70 : 100;
-            } else {
-                // Keep nodes at reasonable distance from timeline on mobile
-                nodeOffsetCsv = isMobile ? Math.sign(nodeOffsetCsv) * Math.min(Math.abs(nodeOffsetCsv * 0.4), 90) : nodeOffsetCsv;
-            }
+            // PRIORITY #1: Ensure no overlaps - but be flexible about vertical positioning
+            let attempts = 0;
+            const maxAttempts = 10;
             
-            // Ensure mobile nodes alternate sides for better distribution
-            if (isMobile) {
-                // Use event.id to determine alternating sides (even/odd)
-                if (event.id % 2 === 0) {
-                    nodeOffsetCsv = Math.abs(nodeOffsetCsv);
-                } else {
-                    nodeOffsetCsv = -Math.abs(nodeOffsetCsv);
-                }
-            }
-            
-            // Limit offset range
-            nodeOffsetCsv = Math.max(isMobile ? -90 : -200, Math.min(isMobile ? 90 : 200, nodeOffsetCsv));
-            
-            let idealX = dotPosition.x + Math.cos(angle + Math.PI / 2) * nodeOffsetCsv;
-            let idealY = dotPosition.y + Math.sin(angle + Math.PI / 2) * nodeOffsetCsv;
-            
-            return { dotPosition, angle, nodeOffset: nodeOffsetCsv, idealX, idealY };
-        });
-
-        const nodeCandidates = dotCache.map(({ idealX, idealY, dotPosition }) => {
-            let candidates = [];
-            for (let r = 0; r <= spiralMaxRadius; r += spiralStep) {
-                for (let s = 0; s < numCandidates; s++) {
-                    let spiralAngle = (Math.PI * 2 * s / numCandidates);
-                    let nodeX = idealX + Math.cos(spiralAngle) * r; // Top-left X
-                    let nodeY = idealY + Math.sin(spiralAngle) * r; // Top-left Y
-
-                    if (nodeX < 0 || nodeX + nodeDiameter > svgWidth || nodeY < 0 || nodeY + nodeDiameter > svgHeight) continue;
-
-                    if (Math.abs(nodeX + nodeDiameter / 2 - dotPosition.x) < (isMobile ? 150 : 250) && Math.abs(nodeY + nodeDiameter / 2 - dotPosition.y) < (isMobile ? 150 : 250)) {
-                        if (minDistanceToPath(nodeX + nodeDiameter / 2, nodeY + nodeDiameter / 2, timelinePath, 12) < minPathDist) continue;
+            while (attempts < maxAttempts) {
+                let hasOverlap = false;
+                
+                for (const placed of placedNodes) {
+                    const dx = finalX - placed.centerX;
+                    const dy = finalY - placed.centerY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < minSpacing) {
+                        hasOverlap = true;
+                        
+                        // Gentle push with smaller steps
+                        const pushDistance = 35; // Fixed small step size
+                        const pushAngle = Math.atan2(dy, dx);
+                        
+                        // Gentle movements - prefer staying close to timeline
+                        if (Math.abs(finalY + pushDistance - dotPosition.y) <= maxVerticalDeviation) {
+                            finalY += pushDistance; // Small vertical step
+                        } else {
+                            // Small horizontal step
+                            finalX += isLeftSide ? -pushDistance : pushDistance;
+                        }
+                        break;
                     }
-                    const distToDotSq = Math.pow(nodeX + nodeDiameter / 2 - dotPosition.x, 2) + Math.pow(nodeY + nodeDiameter / 2 - dotPosition.y, 2);
-                    candidates.push({ nodeX, nodeY, distToDotSq });
                 }
+                
+                if (!hasOverlap) break;
+                attempts++;
             }
-            if (candidates.length === 0) { // Add ideal position if no other candidates found
-                candidates.push({ nodeX: Math.max(0, Math.min(idealX, svgWidth - nodeDiameter)), nodeY: Math.max(0, Math.min(idealY, svgHeight - nodeDiameter)), distToDotSq: 0 });
-            }
-            return candidates;
-        });
-
-        let bestArrangement = null;
-        let bestScore = -Infinity;
-        const maxTries = isMobile ? 2 : 3; // Fewer tries on mobile for performance
-
-        for (let attempt = 0; attempt < maxTries; attempt++) {
-            let order = [...Array(timelineEvents.length).keys()];
-            for (let i = order.length - 1; i > 0; i--) { // Shuffle order
-                const j = Math.floor(Math.random() * (i + 1));
-                [order[i], order[j]] = [order[j], order[i]];
-            }
-            let placedNodes = []; // Stores {x, y} of top-left of placed nodes
-            let currentArrangement = Array(timelineEvents.length);
-            let currentScore = 0;
-
-            for (let idx of order) {
-                let bestCandidateForNode = null;
-                let bestLocalScore = -Infinity;
-
-                for (const cand of nodeCandidates[idx]) { // cand.nodeX, cand.nodeY are top-left
-                    let isOverlapping = false;
-                    for (const placed of placedNodes) {
-                        const dx = (cand.nodeX + nodeDiameter / 2) - (placed.x + nodeDiameter / 2);
-                        const dy = (cand.nodeY + nodeDiameter / 2) - (placed.y + nodeDiameter / 2);
-                        if ((dx * dx + dy * dy) < minDistSqNodes) {
-                            isOverlapping = true;
+            
+            // If still has overlap after attempts, use more aggressive positioning
+            if (attempts >= maxAttempts) {
+                // Find a clear spot by checking all placed nodes
+                let clearY = dotPosition.y;
+                let foundClear = false;
+                
+                for (let yOffset = 0; yOffset <= 300; yOffset += 30) {
+                    for (let direction of [-1, 1]) {
+                        const testY = dotPosition.y + (direction * yOffset);
+                        let isClear = true;
+                        
+                        for (const placed of placedNodes) {
+                            const dx = finalX - placed.centerX;
+                            const dy = testY - placed.centerY;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < minSpacing) {
+                                isClear = false;
+                                break;
+                            }
+                        }
+                        
+                        if (isClear) {
+                            finalY = testY;
+                            foundClear = true;
                             break;
                         }
                     }
-                    if (isOverlapping) continue;
-
-                    let localScore = -cand.distToDotSq / (isMobile ? 1000 : 4000); // Penalize distance from dot
-                    // Bonus for not overlapping (already implicitly handled by `continue` but can be explicit)
-                    // localScore += isMobile ? 50 : 100; 
-
-                    if (localScore > bestLocalScore) {
-                        bestLocalScore = localScore;
-                        bestCandidateForNode = cand;
-                    }
+                    if (foundClear) break;
                 }
-                
-                if (!bestCandidateForNode && nodeCandidates[idx].length > 0) { // Fallback: pick first candidate if no non-overlapping found
-                     bestCandidateForNode = nodeCandidates[idx][0];
-                } else if (!bestCandidateForNode) { // Absolute fallback: use ideal position
-                     let { idealX, idealY } = dotCache[idx];
-                     bestCandidateForNode = { nodeX: Math.max(0, Math.min(idealX, svgWidth - nodeDiameter)), nodeY: Math.max(0, Math.min(idealY, svgHeight - nodeDiameter)), distToDotSq: 0 };
-                }
-
-                currentArrangement[idx] = bestCandidateForNode;
-                placedNodes.push({ x: bestCandidateForNode.nodeX, y: bestCandidateForNode.nodeY });
-                currentScore += bestLocalScore;
             }
-
-            if (currentScore > bestScore) {
-                bestScore = currentScore;
-                bestArrangement = currentArrangement;
-            }
-        }
-        
-        if (!bestArrangement) { // Fallback if decluttering completely fails
-            console.warn("Node decluttering failed, using ideal positions as fallback.");
-            bestArrangement = dotCache.map(({ idealX, idealY }) => ({
-                nodeX: Math.max(0, Math.min(idealX, svgWidth - nodeDiameter)),
-                nodeY: Math.max(0, Math.min(idealY, svgHeight - nodeDiameter)),
-            }));
-        }
-
-        // Spread events vertically on mobile
-        if (isMobile) {
-            // For mobile, adjust event positions to spread them out vertically
-            const eventCount = timelineEvents.length;
             
-            // Distribute events evenly along the vertical path
-            timelineEvents.forEach((event, idx) => {
-                // Start from 0.05 and end at 0.95 to avoid edges
-                event.position = 0.05 + ((idx + 1) / (eventCount + 1)) * 0.9;
+            // Keep within bounds
+            finalX = Math.max(nodeDiameter / 2 + 10, Math.min(finalX, svgWidth - nodeDiameter / 2 - 10));
+            finalY = Math.max(nodeDiameter / 2 + 10, Math.min(finalY, svgHeight - nodeDiameter / 2 - 10));
+            
+            placedNodes.push({ 
+                centerX: finalX, 
+                centerY: finalY,
+                nodeX: finalX - nodeDiameter / 2, 
+                nodeY: finalY - nodeDiameter / 2, 
+                event, 
+                dotPosition: getPointAtPosition(timelinePath, event.position)
             });
-            
-            // Recalculate dot positions with new event positions
-            dotCache.forEach((cache, idx) => {
-                const newDotPosition = getPointAtPosition(timelinePath, timelineEvents[idx].position);
-                cache.dotPosition = newDotPosition;
-                
-                // Recalculate ideal node position - ensure alternating left/right pattern
-                const angle = getAngleAtPosition(timelinePath, timelineEvents[idx].position);
-                cache.angle = angle;
-                
-                // Alternate nodes left and right of path
-                let nodeOffset = (idx % 2 === 0) ? 70 : -70;
-                cache.nodeOffset = nodeOffset;
-                
-                cache.idealX = newDotPosition.x + Math.cos(Math.PI/2) * nodeOffset; // horizontal offset only
-                cache.idealY = newDotPosition.y; // keep same vertical position as dot
-            });
-        }
+        });
 
-        bestArrangement.forEach((pos, index) => {
-            const event = timelineEvents[index];
-            const dotPosition = createTimelineDot(event.position);
-            
-            const nodeX = pos.nodeX;
-            const nodeY = pos.nodeY;
+        placedNodes.forEach(({ nodeX, nodeY, event, dotPosition }, index) => {
+            // Create timeline dot
+            const dot = document.createElement('div');
+            dot.className = 'timeline-dot';
+            dot.style.left = `${dotPosition.x}px`;
+            dot.style.top = `${dotPosition.y}px`;
+            timelineContainer.appendChild(dot);
 
             const node = document.createElement('div');
             node.className = 'timeline-node';
             node.style.left = `${nodeX}px`;
             node.style.top = `${nodeY}px`;
-            // Set size directly for more consistent sizing across devices
             node.style.width = `${nodeDiameter}px`;
             node.style.height = `${nodeDiameter}px`;
             node.dataset.index = index;
@@ -443,7 +383,7 @@ function createTimelineElements() {
                 node.style.borderColor = event.color;
             }
 
-            const placeholderSize = isMobile ? 100 : 140;
+            const placeholderSize = 140;
             const imageSrc = event.image || `https://via.placeholder.com/${placeholderSize}/000000/FFFFFF?text=No+Image`;
             node.innerHTML = `
                 <div class="node-image">
@@ -461,7 +401,7 @@ function createTimelineElements() {
             
             setupLazyLoading(node.querySelector('.lazy-load'));
             timelineContainer.appendChild(node);
-            createConnector(dotPosition, nodeX + nodeDiameter / 2, nodeY + nodeDiameter / 2, event.color, isMobile);
+            createConnector(dotPosition, nodeX + nodeDiameter / 2, nodeY + nodeDiameter / 2, event.color, false);
 
             const summaryCard = document.createElement('div');
             summaryCard.className = 'timeline-summary-card';
@@ -507,9 +447,10 @@ function createTimelineElements() {
                 }
             });
         });
-        setupTimelineNavigation(); // If you have global next/prev buttons
+        
+        setupTimelineNavigation();
         if (document.getElementById('path-particle')) {
-          initPathParticle();
+            initPathParticle();
         }
     }
 }

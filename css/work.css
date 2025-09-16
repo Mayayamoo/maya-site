@@ -247,6 +247,7 @@ nav h1 a {
     margin: 0 auto;
     box-sizing: content-box;
     overflow: visible;
+    transform: translateX(-100px);
 }
 
 .timeline-container.mobile-view {
