@@ -1,0 +1,445 @@
+/* home page stuff */
+.profile-image {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    border: none !important;
+}
+
+.hero-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px 10px;
+    width: 100%;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.profile-image {
+    width: 80%;
+    max-width: 250px;
+    height: auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-image:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+}
+
+.hero-text {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title-glow {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-align: center;
+    margin: 0;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    color: #ccc;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.intro-text {
+    font-size: 1em;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.hero-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.hero-button {
+    width: 80%;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.hero-button.primary {
+    background: linear-gradient(45deg, #ff3264, #ff6b98);
+    color: white;
+    border: none;
+}
+
+.hero-button.secondary {
+    background: transparent;
+    color: #ff3264;
+    border: 2px solid #ff3264;
+}
+
+.hero-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.hero-button.primary:hover {
+    background: linear-gradient(45deg, #ff4778, #ff7ba7);
+}
+
+.hero-button.secondary:hover {
+    background: rgba(255, 50, 100, 0.1);
+}
+
+/* Featured Section Styles */
+.featured-section {
+    margin: 40px 0;
+    width: 100%;
+    padding: 0 10px;
+}
+
+.featured-section h2 {
+    font-size: 1.6em;
+    color: #ff3264;
+    margin-bottom: 25px;
+    text-align: center;
+    position: relative;
+}
+
+.featured-section h2:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, transparent, #ff3264, transparent);
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.featured-card {
+    background: rgba(30, 30, 50, 0.5);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    width: 100%;
+}
+
+.featured-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.featured-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    margin-bottom: 0;
+    border-radius: 8px 8px 0 0;
+    border: none;
+    transform: none;
+}
+
+.featured-card h3 {
+    font-size: 1.2em;
+    margin: 12px 12px 8px;
+    color: #ff3264;
+}
+
+.featured-card p {
+    margin: 0 12px 12px;
+    font-size: 0.9em;
+    color: #ddd;
+}
+
+.card-link {
+    display: inline-block;
+    margin: 3px 12px 12px;
+    color: #ff3264;
+    text-decoration: none;
+    font-weight: bold;
+    position: relative;
+}
+
+.card-link:after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #ff3264;
+    transition: width 0.3s ease;
+}
+
+.card-link:hover:after {
+    width: 100%;
+}
+
+/* Mobile Screens - Override main-content padding for index page */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 80px 15px 20px !important;
+    }
+    
+    .hero-section {
+        padding: 0;
+        gap: 0;
+        margin-bottom: 20px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .profile-image {
+        width: 60%;
+        max-width: 180px;
+        border-radius: 12px;
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    .title-glow {
+        font-size: 1.8em;
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+    
+    .subtitle {
+        margin-bottom: 15px;
+        font-size: 1.1em;
+    }
+    
+    .hero-buttons {
+        margin-top: 10px;
+        gap: 8px;
+    }
+    
+    .hero-button {
+        width: 70%;
+        padding: 12px 20px;
+        font-size: 0.9em;
+    }
+    
+    .featured-section {
+        margin: 30px 0;
+    }
+    
+    .featured-section h2 {
+        margin-bottom: 20px;
+    }
+}
+
+/* Very Small Screens */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 70px 10px 15px !important;
+    }
+    
+    .hero-section {
+        padding: 0;
+        gap: 0;
+        margin-bottom: 15px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .profile-image {
+        width: 55%;
+        max-width: 150px;
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .title-glow {
+        font-size: 1.6em;
+        margin-bottom: 3px;
+        margin-top: 3px;
+    }
+    
+    .subtitle {
+        margin-bottom: 10px;
+        font-size: 1em;
+    }
+    
+    .hero-buttons {
+        margin-top: 8px;
+        gap: 6px;
+    }
+    
+    .hero-button {
+        width: 75%;
+        padding: 10px 16px;
+        font-size: 0.85em;
+    }
+    
+    .featured-section {
+        margin: 20px 0;
+    }
+    
+    .featured-section h2 {
+        font-size: 1.4em;
+        margin-bottom: 15px;
+    }
+    
+    .featured-grid {
+        gap: 12px;
+    }
+    
+    .featured-card {
+        padding: 10px;
+    }
+    
+    .featured-card img {
+        height: 120px;
+    }
+    
+    .featured-card h3 {
+        font-size: 1.1em;
+        margin: 8px 0 6px;
+    }
+    
+    .featured-card p {
+        font-size: 0.85em;
+        margin-bottom: 8px;
+    }
+}
+
+/* Tablet Screens */
+@media (min-width: 768px) {
+    .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+    
+    .profile-image {
+        max-width: 300px;
+    }
+    
+    .subtitle {
+        font-size: 1.3em;
+    }
+    
+    .intro-text {
+        font-size: 1.1em;
+    }
+
+    .title-glow {
+        font-size: 1.8em;
+    }
+
+    
+    .hero-buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .hero-button {
+        width: auto;
+    }
+    
+    .featured-section {
+        margin: 60px 0;
+    }
+    
+    .featured-section h2 {
+        font-size: 1.8em;
+    }
+}
+
+/* Desktop Screens */
+@media (min-width: 1024px) {
+    .hero-section {
+        flex-direction: row;
+        text-align: left;
+        padding: 30px 0;
+        gap: 60px;
+        margin-bottom: 60px;
+        width: 100%; /* Added for full width */
+    }
+    
+    .hero-text {
+        flex: 1;
+    }
+    
+    /* Change this to left alignment for better desktop layout */
+    .title-glow, .subtitle, .intro-text {
+        text-align: center;
+        font-size: 2em;
+    }
+    
+    /* Change this to left alignment to match text */
+    .hero-buttons {
+        justify-content: center;
+    }
+    
+    .profile-image {
+        width: 40%;
+        max-width: 400px;
+    }
+    
+    .featured-section {
+        margin: 80px 0;
+        padding: 0;
+    }
+    
+    .featured-section h2 {
+        font-size: 2em;
+    }
+    
+    .featured-section h2:after {
+        width: 100px;
+    }
+    
+    .featured-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+    
+    .featured-card {
+        min-height: 350px;
+    }
+    
+    .featured-card h3 {
+        font-size: 1.3em;
+        margin: 15px 15px 10px;
+    }
+    
+    .featured-card p {
+        font-size: 0.95em;
+        margin: 0 15px 15px;
+    }
+    
+    .featured-card img {
+        height: 200px;
+    }
+}
+
+/* Large Desktop Screens */
+@media (min-width: 1400px) {
+    .featured-grid {
+        gap: 40px;
+    }
+}

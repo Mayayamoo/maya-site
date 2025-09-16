@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Timeline</title>
+    <meta name="description" content="Maya Luna's personal website. Welcome dear traveller">
+    <meta name="keywords" content="Maya Luna, about, biography, portfolio, Progress Libs, Digital, twitter Maya">
+    <meta name="author" content="Maya Luna">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="assets/Piano.png" type="image/jpeg">
+    <link rel="apple-touch-icon" href="assets/Piano.png">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mayaluna.us/endeavours">
+    <meta property="og:title" content="Career Timeline - Maya Luna">
+    <meta property="og:description" content="Maya Luna's personal website. Enter if you dare">
+    <meta property="og:image" content="https://mayaluna.us/assets/Piano.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://mayaluna.us/endeavours">
+    <meta property="twitter:title" content="Career Timeline - Maya Luna">
+    <meta property="twitter:description" content="Maya Luna's personal website. Enter if you dare.">
+    <meta property="twitter:image" content="https://mayaluna.us/assets/Piano.png">
+
+
+    <!-- CSS --> 
+    <link rel="stylesheet" href="css/work.css">
+    <link rel="stylesheet" href="css/timeline-toc.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<!-- Loading -->
+<body>
+    <div id="timeline-loading-overlay">
+        <div class="loading-content">
+            <div class="loading-title">Loading Timeline...</div>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+    <!-- Directory-->
+    <div class="main-content">
+        <h1 class="title-glow">My Hijinks</h1>
+        <p class="subtitle">explore the depths of the Mayanomicon™</p>
+        
+        <div class="timeline-container">
+            <div class="timeline-path">
+                    <svg class="timeline-svg" viewBox="0 0 1000 1800" preserveAspectRatio="xMidYMid meet">
+                    <!-- js will fill this -->
+                    <path id="timeline-curve" class="timeline-line" d="" fill="none" stroke="#ff3264" stroke-width="6" stroke-dasharray="15,10" />
+                    <!-- bouncy ball -->
+                    <circle id="path-particle" r="8" fill="#ffff00">
+                        <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite" />
+                        <animate attributeName="r" values="6;9;6" dur="1.5s" repeatCount="indefinite" />
+                    </circle>
+                </svg>
+            </div>
+            <!-- dots n stuff go here -->
+        </div>
+
+        <!-- Timeline Table of Contents -->
+        <div class="timeline-toc">
+            <div class="timeline-toc-header">
+                <h3 class="timeline-toc-title">Table of Contents</h3>
+                <button class="timeline-toc-toggle" aria-label="Toggle table of contents">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="timeline-toc-content">
+                <!-- js fills this too -->
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay"></div>
+
+    <script src="js/work.js"></script>
+    <script src="js/navigation.js"></script>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+    </style>
+</body>
+</html>
+
