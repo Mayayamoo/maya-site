@@ -383,6 +383,7 @@ nav h1 a {
 /* Path particle styles */
 #path-particle {
     filter: drop-shadow(0 0 6px rgba(255, 255, 0, 0.9));
+    will-change: transform;
 }
 
 /* Enhanced timeline dots */
@@ -411,12 +412,23 @@ nav h1 a {
     left: 50%;
     transform: translate(-50%, -50%);
     animation: pulse 2s infinite;
+    will-change: transform, opacity;
 }
 
 @keyframes pulse {
     0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
     50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.2; }
     100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+}
+
+/* Lazy loading styles */
+.lazy-load {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.lazy-load.loaded {
+    opacity: 1;
 }
 
 /* Enhanced timeline nodes */
@@ -438,6 +450,7 @@ nav h1 a {
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     transform-origin: center center;
+    will-change: transform, box-shadow;
 }
 
 .timeline-node.active {
@@ -506,6 +519,7 @@ nav h1 a {
     z-index: 0;
     animation: node-pulse 3s infinite;
     opacity: 0;
+    will-change: transform, opacity;
 }
 
 @keyframes node-pulse {

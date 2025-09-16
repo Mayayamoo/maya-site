@@ -20,10 +20,37 @@ function parseCSV(csv) {
 }
 
 async function loadTimelineEventsFromCSV(path = 'timelinedata/timelineevents.csv') {
+    const cacheKey = 'timeline_events_cache';
+    const cacheTimestampKey = 'timeline_events_timestamp';
+    const cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    
+    try {
+        const cachedData = localStorage.getItem(cacheKey);
+        const cachedTimestamp = localStorage.getItem(cacheTimestampKey);
+        
+        if (cachedData && cachedTimestamp) {
+            const age = Date.now() - parseInt(cachedTimestamp);
+            if (age < cacheExpiry) {
+                return JSON.parse(cachedData);
+            }
+        }
+    } catch (e) {
+        console.warn('Cache read failed, fetching fresh data');
+    }
+    
     const res = await fetch(path);
     if (!res.ok) throw new Error('csv file broke');
     const csv = await res.text();
-    return parseCSV(csv);
+    const parsedData = parseCSV(csv);
+    
+    try {
+        localStorage.setItem(cacheKey, JSON.stringify(parsedData));
+        localStorage.setItem(cacheTimestampKey, Date.now().toString());
+    } catch (e) {
+        console.warn('Cache write failed, continuing without cache');
+    }
+    
+    return parsedData;
 }
 
 let timelineEvents = [];
@@ -181,6 +208,7 @@ function createTimelineDot(position) {
 
 async function initTimeline() {
     try {
+        initImageObserver();
         timelineEvents = await loadTimelineEventsFromCSV();
         timelineEvents.forEach(event => {
             if (typeof event.date === 'string') event.date = event.date.trim();
@@ -191,6 +219,7 @@ async function initTimeline() {
         });
         computeTimelinePositions();
         renderTimelineTOC();
+        createTimelineElements();
         
         if (window.innerWidth <= 768) {
             setupMobileTOC();
@@ -415,9 +444,10 @@ function createTimelineElements() {
             }
 
             const placeholderSize = isMobile ? 100 : 140;
+            const imageSrc = event.image || `https://via.placeholder.com/${placeholderSize}/000000/FFFFFF?text=No+Image`;
             node.innerHTML = `
                 <div class="node-image">
-                    <img src="${event.image || `https://via.placeholder.com/${placeholderSize}/000000/FFFFFF?text=No+Image`}" alt="${event.title}" onerror="this.src='https://via.placeholder.com/${placeholderSize}/000000/FFFFFF?text=Error'; this.onerror=null;">
+                    <img data-src="${imageSrc}" alt="${event.title}" class="lazy-load" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${placeholderSize}' height='${placeholderSize}'%3E%3Crect width='100%25' height='100%25' fill='%23333'/%3E%3C/svg%3E">
                     <div class="node-icon" style="background-color: ${event.color || '#ff3264'}">
                         <i class="${event.icon || 'fas fa-star'}"></i>
                     </div>
@@ -428,6 +458,8 @@ function createTimelineElements() {
                 </div>
                 <div class="node-pulse" style="border-color: ${event.color || '#ff3264'}"></div>
             `;
+            
+            setupLazyLoading(node.querySelector('.lazy-load'));
             timelineContainer.appendChild(node);
             createConnector(dotPosition, nodeX + nodeDiameter / 2, nodeY + nodeDiameter / 2, event.color, isMobile);
 
@@ -557,6 +589,7 @@ function createMobileTimelineBubbles() {
             showTimelineDetailByIndex(index);
             updateTocActiveState(event.id);
         });
+        
         
         entriesContainer.appendChild(entry);
     });
@@ -953,9 +986,7 @@ window.addEventListener('load', () => {
     if (timelinePath) {
         const pathData = generatePath();
         timelinePath.setAttribute('d', pathData);
-        initTimeline().then(() => {
-            handleResponsiveTimeline(); // Initial responsive setup after data is loaded
-        }).catch(err => console.error("Error during initial timeline load sequence:", err));
+        initTimeline().catch(err => console.error("Error during initial timeline load sequence:", err));
     } else {
         console.error("timelinePathElement (timeline-curve) not found on load.");
          const loadingOverlay = document.getElementById('timeline-loading-overlay');
@@ -1032,4 +1063,43 @@ function setupMobileTOC() {
     }
     
     document.body.appendChild(fab);
+}
+
+let imageObserver;
+function initImageObserver() {
+    if ('IntersectionObserver' in window) {
+        imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                        img.classList.add('loaded');
+                        img.removeAttribute('data-src');
+                        img.onerror = function() {
+                            this.src = this.src.replace(/\/[^\/]*$/, '/error-placeholder.svg');
+                            this.onerror = null;
+                        };
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '50px 0px',
+            threshold: 0.01
+        });
+    }
+}
+
+function setupLazyLoading(img) {
+    if (imageObserver && img) {
+        imageObserver.observe(img);
+    } else {
+        const src = img.getAttribute('data-src');
+        if (src) {
+            img.src = src;
+            img.removeAttribute('data-src');
+        }
+    }
 }
