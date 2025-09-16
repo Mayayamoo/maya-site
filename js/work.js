@@ -191,6 +191,10 @@ async function initTimeline() {
         });
         computeTimelinePositions();
         renderTimelineTOC();
+        
+        if (window.innerWidth <= 768) {
+            setupMobileTOC();
+        }
 
         const loadingOverlay = document.getElementById('timeline-loading-overlay');
         if (loadingOverlay) {
@@ -478,143 +482,104 @@ function createTimelineElements() {
     }
 }
 
-// Function to create the mobile timeline with bubble cards - updated to remove descriptions
 function createMobileTimelineBubbles() {
-    // Clear any existing elements that might cause spacing issues
-    document.querySelectorAll('.mobile-filter-bar, .timeline-track, .timeline-entries').forEach(el => el.remove());
+    document.querySelectorAll('.mobile-filter-bar, .mobile-timeline-track, .mobile-timeline-entries, .mobile-timeline-wrapper').forEach(el => el.remove());
     
-    // Create filter buttons
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mobile-timeline-wrapper';
+    
     const filterBar = document.createElement('div');
     filterBar.className = 'mobile-filter-bar';
-    filterBar.style.marginTop = '0'; // Ensure no top margin
     
-    // Create icon-based filter categories with proper names
     const filterCategories = [
-        { id: 'all', name: 'All', icon: 'fas fa-globe' },
-        { id: 'fas fa-suitcase', name: 'Work', icon: 'fas fa-suitcase' },
-        { id: 'fas fa-user-alt', name: 'Personal', icon: 'fas fa-user-alt' },
-        { id: 'fas fa-star', name: 'Featured', icon: 'fas fa-star' },
-        { id: 'fas fa-cogs', name: 'Projects', icon: 'fas fa-cogs' }
+        { id: 'all', name: 'All', icon: 'fas fa-globe', color: '#ffffff' },
+        { id: 'Work', name: 'Work', icon: 'fas fa-briefcase', color: '#d17aff' },
+        { id: 'Progress Libs', name: 'Progress Libs', icon: 'fas fa-star', color: '#ff3264' },
+        { id: 'Experience', name: 'Experience', icon: 'fas fa-graduation-cap', color: '#50dd90' },
+        { id: 'Personal', name: 'Personal', icon: 'fas fa-user', color: '#ff7a7a' }
     ];
     
-    // Create filter buttons for each category
     filterCategories.forEach(category => {
         const button = document.createElement('button');
         button.className = 'mobile-filter-btn' + (category.id === 'all' ? ' active' : '');
         button.setAttribute('data-filter', category.id);
         button.innerHTML = `<i class="${category.icon}"></i> ${category.name}`;
         
-        button.addEventListener('click', () => {
-            // Update active state
-            document.querySelectorAll('.mobile-filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+        if (category.id === 'all') {
             button.classList.add('active');
-            
-            // Filter entries by icon
+        } else {
+            const colorRgb = hexToRgb(category.color);
+            button.style.setProperty('--filter-color', category.color);
+            button.style.setProperty('--filter-color-rgb', colorRgb);
+        }
+        
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.mobile-filter-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
             filterMobileEntries(category.id);
         });
         
         filterBar.appendChild(button);
     });
     
-    // Insert filter bar before the timeline track
-    timelineContainer.insertBefore(filterBar, timelineContainer.firstChild);
-    
-    // Create the track line
     const track = document.createElement('div');
-    track.className = 'timeline-track';
-    track.style.marginTop = '0';
-    track.style.top = '0';
-    track.innerHTML = '<div class="track-line"></div><div class="track-glow"></div>';
+    track.className = 'mobile-timeline-track';
     
-    // Create the entries container - ensure it has no top margin/padding
     const entriesContainer = document.createElement('div');
-    entriesContainer.className = 'timeline-entries';
-    entriesContainer.style.marginTop = '0';
-    entriesContainer.style.paddingTop = '5px';
+    entriesContainer.className = 'mobile-timeline-entries';
     
-    // Add elements to the DOM - order matters for spacing
-    timelineContainer.appendChild(filterBar);
-    timelineContainer.appendChild(track);
-    timelineContainer.appendChild(entriesContainer);
-    
-    // Create timeline entries for each event - showing all entries with continuous scrolling
     timelineEvents.forEach((event, index) => {
         const entry = document.createElement('div');
-        entry.className = 'timeline-entry';
-        entry.dataset.category = event.branch || 'Other';
-        entry.dataset.id = event.id;
-        entry.dataset.index = index;
-        entry.dataset.icon = event.icon || 'fas fa-atom'; // Store icon for filtering
-        entry.style.display = 'flex'; // Show all entries by default
+        entry.className = 'mobile-timeline-entry';
         
-        // Add featured class if this is a highlight or special event
-        if (event.branch === 'Highlights' || event.icon === 'fas fa-star') {
-            entry.classList.add('featured');
+        const category = getCategoryFromIcon(event.icon);
+        entry.dataset.category = category;
+        entry.dataset.index = index;
+        
+        if (event.color) {
+            entry.style.borderLeftColor = event.color;
+            entry.style.setProperty('--entry-color', event.color);
         }
         
+        const truncatedDescription = event.description ? 
+            event.description.split('\n')[0].split('.')[0] + (event.description.length > event.description.split('\n')[0].split('.')[0].length ? '...' : '') 
+            : '';
+        
         entry.innerHTML = `
-            <div class="entry-connector">
-                <div class="connector-line"></div>
-                <div class="connector-dot"></div>
-            </div>
-            <div class="entry-card">
-                <div class="card-corner top-left"></div>
-                <div class="card-corner top-right"></div>
-                <div class="card-corner bottom-left"></div>
-                <div class="card-corner bottom-right"></div>
-                
-                ${entry.classList.contains('featured') ? '<div class="featured-tag">✨ Featured</div>' : ''}
-                <div class="card-date">${event.date}</div>
-                <div class="card-header">
-                    <h2>${event.title}</h2>
-                    <div class="card-company">${event.company || ''}</div>
-                </div>
-                <div class="card-footer">
-                    <button class="card-btn" data-id="${event.id}">
-                        <span>Tell me more!</span>
-                    </button>
-                    <div class="category-badge" style="--badge-color: ${event.color || getCategoryColor(event.branch || 'Other')};">
-                        <i class="${event.icon || getCategoryIcon(event.branch || 'Other')}"></i>
-                    </div>
-                </div>
-            </div>
+            <div class="mobile-entry-date">${event.date}</div>
+            <div class="mobile-entry-title">${event.title}</div>
+            <div class="mobile-entry-company">${event.company || ''}</div>
+            <div class="mobile-entry-description">${truncatedDescription}</div>
+            <button class="mobile-entry-button" data-index="${index}">View Details</button>
         `;
         
-        entriesContainer.appendChild(entry);
-        
-        // Add random subtle rotations to corners for quirky feel
-        entry.querySelectorAll('.card-corner').forEach(corner => {
-            const randomRotation = (Math.random() * 6) - 3;
-            corner.style.transform = `rotate(${randomRotation}deg)`;
-        });
-        
-        // Add click listener to the "Tell me more" button
-        entry.querySelector('.card-btn').addEventListener('click', () => {
+        entry.querySelector('.mobile-entry-button').addEventListener('click', () => {
             showTimelineDetailByIndex(index);
             updateTocActiveState(event.id);
         });
+        
+        entriesContainer.appendChild(entry);
     });
     
-    // Hide navigation controls since we're showing all entries
+    wrapper.appendChild(filterBar);
+    wrapper.appendChild(track);
+    wrapper.appendChild(entriesContainer);
+    timelineContainer.appendChild(wrapper);
+    
     const navWrapper = document.querySelector('.timeline-navigation');
-    if (navWrapper) {
-        navWrapper.style.display = 'none';
-    }
+    if (navWrapper) navWrapper.style.display = 'none';
 }
 
-// Function to filter mobile timeline entries by icon
 function filterMobileEntries(filter) {
-    const entries = document.querySelectorAll('.timeline-entry');
+    const entries = document.querySelectorAll('.mobile-timeline-entry');
     
     entries.forEach(entry => {
         if (filter === 'all') {
-            entry.style.display = 'flex';
+            entry.style.display = 'block';
         } else {
-            const entryIcon = entry.dataset.icon;
-            if (filter === entryIcon) {
-                entry.style.display = 'flex';
+            const entryCategory = entry.dataset.category;
+            if (filter === entryCategory) {
+                entry.style.display = 'block';
             } else {
                 entry.style.display = 'none';
             }
@@ -878,6 +843,16 @@ function getIconCategory(icon) { // Map icon to category name
     return iconCategories[icon] || 'Other';
 }
 
+function getCategoryFromIcon(icon) {
+    const iconToCategory = {
+        'fas fa-suitcase': 'Work',
+        'fas fa-star': 'Progress Libs',
+        'fas fa-cogs': 'Experience',
+        'fas fa-user-alt': 'Personal'
+    };
+    return iconToCategory[icon] || 'Other';
+}
+
 function getCategoryIcon(categoryName) { // Based on CSV 'branch'
     const icons = {
         'Work': 'fas fa-suitcase',
@@ -951,25 +926,26 @@ function handleResponsiveTimeline() {
     // Update SVG dimensions
     updateSvgViewBox();
 
-    if (isMobile) {
-        timelineContainer.classList.add('mobile-timeline-active');
-        timelineContainer.classList.remove('desktop-timeline-active');
-        
-        // Reset container spacing for mobile
+    const hasMobileWrapper = document.querySelector('.mobile-timeline-wrapper');
+    
+    if (isMobile && !hasMobileWrapper) {
         timelineContainer.style.marginTop = '0';
         timelineContainer.style.paddingTop = '0';
         
-        // Reduce SVG height if not needed
         if (document.querySelector('.timeline-svg')) {
             document.querySelector('.timeline-svg').style.height = 'auto';
         }
-    } else {
-        timelineContainer.classList.remove('mobile-timeline-active');
-        timelineContainer.classList.add('desktop-timeline-active');
-    }
-    
-    if (timelineEvents && timelineEvents.length > 0) {
-        createTimelineElements(); // Re-render with adaptive parameters
+        
+        if (timelineEvents && timelineEvents.length > 0) {
+            createTimelineElements();
+        }
+        setupMobileTOC();
+    } else if (!isMobile && hasMobileWrapper) {
+        document.querySelectorAll('.mobile-timeline-wrapper, .mobile-toc-fab').forEach(el => el.remove());
+        
+        if (timelineEvents && timelineEvents.length > 0) {
+            createTimelineElements();
+        }
     }
 }
 
@@ -1009,6 +985,51 @@ function minDistanceToPath(x, y, path, steps = 12) {
     return Math.sqrt(minDistSq);
 }
 
-// Ensure old/conflicting functions like adjustTimelineElements, createMobileTimelineNode, 
-// and multiple handleResponsiveTimeline definitions are removed.
-// The logic is now consolidated.
+function setupMobileTOC() {
+    const existingFab = document.querySelector('.mobile-toc-fab');
+    if (existingFab) existingFab.remove();
+    
+    const fab = document.createElement('button');
+    fab.className = 'mobile-toc-fab';
+    fab.innerHTML = '<i class="fas fa-list"></i>';
+    fab.setAttribute('aria-label', 'Toggle table of contents');
+    
+    const toc = document.querySelector('.timeline-toc');
+    let isVisible = false;
+    
+    fab.addEventListener('click', () => {
+        if (isVisible) {
+            toc.classList.remove('mobile-visible');
+            fab.classList.remove('active');
+            fab.innerHTML = '<i class="fas fa-list"></i>';
+        } else {
+            toc.classList.add('mobile-visible');
+            fab.classList.add('active');
+            fab.innerHTML = '<i class="fas fa-times"></i>';
+        }
+        isVisible = !isVisible;
+    });
+    
+    if (toc) {
+        const tocToggle = toc.querySelector('.timeline-toc-toggle');
+        if (tocToggle) {
+            tocToggle.addEventListener('click', () => {
+                toc.classList.remove('mobile-visible');
+                fab.classList.remove('active');
+                fab.innerHTML = '<i class="fas fa-list"></i>';
+                isVisible = false;
+            });
+        }
+        
+        toc.addEventListener('click', (e) => {
+            if (e.target.classList.contains('timeline-toc-item')) {
+                toc.classList.remove('mobile-visible');
+                fab.classList.remove('active');
+                fab.innerHTML = '<i class="fas fa-list"></i>';
+                isVisible = false;
+            }
+        });
+    }
+    
+    document.body.appendChild(fab);
+}

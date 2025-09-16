@@ -1052,638 +1052,253 @@ nav h1 a {
     }
 }
 
-/* Remove conflicting media queries to avoid overriding the new styles */
-@media (max-width: 900px), (max-width: 600px), (max-width: 400px) {
-    .timeline-container:not(.mobile-view) {
-        width: 100%;
-        overflow-x: hidden;
-    }
-    
-    .timeline-path, .timeline-svg {
-        width: 100%;
-    }
-}
 
-@media (max-width: 900px) {
-    .timeline-container {
-        width: 100vw;
-        min-width: 0;
-        height: 80vh;
-        min-height: 900px;
-        overflow-x: auto;
-        overflow-y: visible;
-        position: relative;
-        margin: 0;
-        padding-bottom: 40px;
-    }
-    .timeline-path,
-    .timeline-svg {
-        width: 1200px;
-        min-width: 900px;
-        height: 80vh;
-        min-height: 900px;
-    }
-    .timeline-node {
-        width: 90px;
-        height: 90px;
-        font-size: 0.9em;
-    }
-    .timeline-dot {
-        width: 10px;
-        height: 10px;
-    }
-    .timeline-minimap-container {
-        right: 2vw;
-        bottom: 2vw;
-        width: 60px;
-        height: 84px;
-    }
-    .timeline-minimap-svg {
-        width: 60px;
-        height: 84px;
-    }
-}
-
-@media (max-width: 600px) {
-    .main-content {
-        padding: 10px 2px 2px 2px;
-    }
-    .timeline-container:not(.mobile-view) {
-        width: 100vw;
-        min-width: 0;
-        height: 60vh;
-        min-height: 600px;
-        overflow-x: auto;
-        overflow-y: visible;
-        position: relative;
-        margin: 0;
-        padding-bottom: 40px;
-    }
-    .timeline-container:not(.mobile-view) .timeline-path,
-    .timeline-container:not(.mobile-view) .timeline-svg {
-        width: 900px;
-        min-width: 600px;
-        height: 60vh;
-        min-height: 600px;
-    }
-    /* This rule targets the original desktop .timeline-node */
-    .timeline-container:not(.mobile-view) .timeline-node {
-        width: 60px;
-        height: 60px;
-        font-size: 0.8em;
-    }
-    .timeline-container:not(.mobile-view) .timeline-dot {
-        width: 7px;
-        height: 7px;
-    }
-    .timeline-minimap-container {
-        right: 1vw;
-        bottom: 1vw;
-        width: 40px;
-        height: 56px;
-    }
-    .timeline-minimap-svg {
-        width: 40px;
-        height: 56px;
-    }
-}
-
-@media (max-width: 400px) {
-    .timeline-container:not(.mobile-view) {
-        width: 100vw;
-        min-width: 0;
-        height: 50vh;
-        min-height: 400px;
-        overflow-x: auto;
-        overflow-y: visible;
-        position: relative;
-        margin: 0;
-        padding-bottom: 20px;
-    }
-    .timeline-container:not(.mobile-view) .timeline-path,
-    .timeline-container:not(.mobile-view) .timeline-svg {
-        width: 600px;
-        min-width: 300px;
-        height: 50vh;
-        min-height: 300px;
-    }
-    /* This rule targets the original desktop .timeline-node */
-    .timeline-container:not(.mobile-view) .timeline-node {
-        width: 40px;
-        height: 40px;
-        font-size: 0.7em;
-    }
-    .timeline-container:not(.mobile-view) .timeline-dot {
-        width: 5px;
-        height: 5px;
-    }
-    .timeline-minimap-container {
-        right: 0.5vw;
-        bottom: 0.5vw;
-        width: 24px;
-        height: 32px;
-    }
-    .timeline-minimap-svg {
-        width: 24px;
-        height: 32px;
-    }
-}
-
-/* Mobile Timeline Styles - Consolidated from quirky-bubble-mobile.css */
 @media (max-width: 768px) {
-    /* Timeline Container Mobile Styles */
-    .timeline-container.mobile-timeline-active {
+    .timeline-container {
         width: 100%;
-        max-width: 100%;
         min-width: 0;
         padding: 0;
         margin: 0;
-        display: block;
-        padding-top: 0 !important;
-        margin-top: 0 !important;
-        min-height: auto !important;
+        height: auto;
+        overflow: visible;
     }
 
-    /* Hide desktop timeline elements on mobile */
-    .mobile-timeline-active .timeline-svg,
-    .mobile-timeline-active .timeline-dot,
-    .mobile-timeline-active .timeline-node,
-    .mobile-timeline-active .node-connector {
-        display: none !important;
-    }
-
-    /* Timeline Track */
-    .mobile-timeline-active .timeline-track {
-        position: absolute;
-        left: 30px;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: rgba(255, 50, 100, 0.7);
-        z-index: 1;
-        height: 100%;
-        box-shadow: 0 0 10px rgba(255, 50, 100, 0.4);
-        top: 0 !important;
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-    }
-
-    .mobile-timeline-active .track-glow {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: var(--primary, #ff3264);
-        filter: blur(6px);
-        opacity: 0.4;
-        border-radius: 3px;
-    }
-
-    /* Timeline Entries */
-    .mobile-timeline-active .timeline-entries {
-        position: relative;
-        z-index: 2;
-        padding-left: 40px;
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-        margin-bottom: 30px;
-        padding-top: 5px !important;
-        margin-top: 0 !important;
-    }
-
-    .mobile-timeline-active .timeline-entry {
-        position: relative;
-        display: flex;
-        opacity: 1;
-        transform: translateX(0);
-        transition: opacity 0.5s, transform 0.5s;
-    }
-
-    .mobile-timeline-active .timeline-entry.hidden-by-filter {
+    .timeline-path,
+    .timeline-svg,
+    .timeline-node,
+    .timeline-dot,
+    .node-connector {
         display: none;
     }
 
-    .mobile-timeline-active .entry-connector {
+    .mobile-timeline-wrapper {
         position: relative;
-        width: 10px;
-        margin-right: 0px;
-        flex-shrink: 0;
+        padding-left: 40px;
+        padding-right: 15px;
     }
 
-    .mobile-timeline-active .connector-line {
+    .mobile-timeline-track {
         position: absolute;
-        top: 50%;
-        left: -10px;
-        width: 10px;
-        height: 2px;
-        background: rgba(255, 50, 100, 0.7);
-        transform: translateY(-50%);
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #ff3264, #a0a0ff);
+        border-radius: 2px;
     }
 
-    .mobile-timeline-active .connector-dot {
-        position: absolute;
-        top: 50%;
-        left: -16px;
-        width: 12px;
-        height: 12px;
-        background: var(--primary, #ff3264);
-        border-radius: 50%;
-        transform: translateY(-50%);
-        z-index: 2;
-        box-shadow: 0 0 8px var(--primary, #ff3264);
+    .mobile-timeline-entries {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        padding-bottom: 30px;
     }
 
-    .mobile-timeline-active .timeline-entry[data-category="Work"] .connector-dot {
-        background: var(--work-color, #d17aff);
-        box-shadow: 0 0 8px var(--work-color, #d17aff);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Projects"] .connector-dot {
-        background: var(--project-color, #ff3264);
-        box-shadow: 0 0 8px var(--project-color, #ff3264);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Experience"] .connector-dot {
-        background: var(--experience-color, #50dd90);
-        box-shadow: 0 0 8px var(--experience-color, #50dd90);
-    }
-
-    /* Card Design */
-    .mobile-timeline-active .entry-card {
+    .mobile-timeline-entry {
         position: relative;
-        background: rgba(25, 25, 40, 0.8);
+        background: rgba(20, 20, 35, 0.9);
         border-radius: 12px;
         padding: 20px;
-        width: 100%;
-        max-width: 500px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        overflow: hidden;
+        border-left: 4px solid #ff3264;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .mobile-timeline-active .timeline-entry[data-category="Work"] .entry-card {
-        border-left: 3px solid var(--work-color, #d17aff);
+    .mobile-timeline-entry:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .mobile-timeline-active .timeline-entry[data-category="Projects"] .entry-card {
-        border-left: 3px solid var(--project-color, #ff3264);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Experience"] .entry-card {
-        border-left: 3px solid var(--experience-color, #50dd90);
-    }
-
-    .mobile-timeline-active .entry-card:hover {
-        transform: translateY(-5px) translateX(2px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Quirky card corners */
-    .mobile-timeline-active .card-corner {
+    .mobile-timeline-entry::before {
+        content: '';
         position: absolute;
-        width: 10px;
-        height: 10px;
-        border-style: solid;
-        border-width: 2px;
-        border-color: rgba(255, 255, 255, 0.2);
+        left: -30px;
+        top: 20px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--entry-color, #ff3264);
+        z-index: 2;
     }
 
-    .mobile-timeline-active .timeline-entry[data-category="Work"] .card-corner {
-        border-color: rgba(209, 122, 255, 0.3);
+    .mobile-timeline-entry::after {
+        content: '';
+        position: absolute;
+        left: -24px;
+        top: 26px;
+        width: 20px;
+        height: 2px;
+        background: var(--entry-color, rgba(255, 50, 100, 0.6));
     }
 
-    .mobile-timeline-active .timeline-entry[data-category="Projects"] .card-corner {
-        border-color: rgba(255, 50, 100, 0.3);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Experience"] .card-corner {
-        border-color: rgba(80, 221, 144, 0.3);
-    }
-
-    .mobile-timeline-active .top-left {
-        top: 6px;
-        left: 6px;
-        border-right: none;
-        border-bottom: none;
-        border-radius: 5px 0 0 0;
-        transform: rotate(-5deg);
-    }
-
-    .mobile-timeline-active .top-right {
-        top: 6px;
-        right: 6px;
-        border-left: none;
-        border-bottom: none;
-        border-radius: 0 5px 0 0;
-        transform: rotate(3deg);
-    }
-
-    .mobile-timeline-active .bottom-left {
-        bottom: 6px;
-        left: 6px;
-        border-right: none;
-        border-top: none;
-        border-radius: 0 0 0 5px;
-        transform: rotate(5deg);
-    }
-
-    .mobile-timeline-active .bottom-right {
-        bottom: 6px;
-        right: 6px;
-        border-left: none;
-        border-top: none;
-        border-radius: 0 0 5px 0;
-        transform: rotate(-3deg);
-    }
-
-    .mobile-timeline-active .card-date {
-        display: inline-block;
+    .mobile-entry-date {
         background: rgba(0, 0, 0, 0.4);
-        color: rgba(255, 255, 255, 0.8);
+        color: #a0a0ff;
         padding: 4px 10px;
         border-radius: 12px;
-        font-size: 0.8rem;
+        font-size: 0.8em;
+        display: inline-block;
         margin-bottom: 10px;
     }
 
-    .mobile-timeline-active .card-header {
+    .mobile-entry-title {
+        font-size: 1.3em;
+        color: #ffff00;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .mobile-entry-company {
+        font-size: 1em;
+        color: #32c8ff;
+        font-style: italic;
         margin-bottom: 12px;
     }
 
-    .mobile-timeline-active .card-header h2 {
-        font-size: 1.4rem;
-        margin-bottom: 5px;
-        color: #ffff00;
-        text-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Work"] .card-header h2 {
-        color: var(--work-color, #d17aff);
-        text-shadow: 0 0 10px rgba(209, 122, 255, 0.3);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Projects"] .card-header h2 {
-        color: var(--project-color, #ff3264);
-        text-shadow: 0 0 10px rgba(255, 50, 100, 0.3);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Experience"] .card-header h2 {
-        color: var(--experience-color, #50dd90);
-        text-shadow: 0 0 10px rgba(80, 221, 144, 0.3);
-    }
-
-    .mobile-timeline-active .card-company {
-        font-size: 1rem;
-        color: var(--secondary, #32c8ff);
-        font-style: italic;
-    }
-
-    .mobile-timeline-active .card-body {
+    .mobile-entry-description {
+        font-size: 0.95em;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.5;
         margin-bottom: 15px;
     }
 
-    .mobile-timeline-active .card-body p {
-        font-size: 0.95rem;
-        line-height: 1.5;
-        color: rgba(255, 255, 255, 0.85);
-    }
-
-    .mobile-timeline-active .card-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-    }
-
-    .mobile-timeline-active .card-btn {
-        position: relative;
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        border-radius: 20px;
-        padding: 8px 16px;
+    .mobile-entry-button {
+        background: rgba(255, 50, 100, 0.2);
+        border: 1px solid rgba(255, 50, 100, 0.4);
         color: #fff;
-        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9em;
         cursor: pointer;
-        overflow: hidden;
         transition: all 0.3s ease;
     }
 
-    .mobile-timeline-active .timeline-entry[data-category="Work"] .card-btn {
-        background: rgba(209, 122, 255, 0.2);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Projects"] .card-btn {
-        background: rgba(255, 50, 100, 0.2);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Experience"] .card-btn {
-        background: rgba(80, 221, 144, 0.2);
-    }
-
-    .mobile-timeline-active .card-btn:hover {
-        transform: translateY(-2px);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Work"] .card-btn:hover {
-        background: rgba(209, 122, 255, 0.3);
-        box-shadow: 0 3px 10px rgba(209, 122, 255, 0.3);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Projects"] .card-btn:hover {
+    .mobile-entry-button:hover {
         background: rgba(255, 50, 100, 0.3);
-        box-shadow: 0 3px 10px rgba(255, 50, 100, 0.3);
     }
 
-    .mobile-timeline-active .timeline-entry[data-category="Experience"] .card-btn:hover {
-        background: rgba(80, 221, 144, 0.3);
-        box-shadow: 0 3px 10px rgba(80, 221, 144, 0.3);
-    }
-
-    .mobile-timeline-active .category-badge {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--badge-color, #ff3264);
-        color: white;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Featured Entry */
-    .mobile-timeline-active .timeline-entry.featured .entry-card {
-        border-width: 2px;
-        border-style: solid;
-        border-left-width: 3px;
-        animation: feature-glow 3s infinite alternate;
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Work"].featured .entry-card {
-        border-color: rgba(209, 122, 255, 0.4);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Projects"].featured .entry-card {
-        border-color: rgba(255, 50, 100, 0.4);
-    }
-
-    .mobile-timeline-active .timeline-entry[data-category="Experience"].featured .entry-card {
-        border-color: rgba(80, 221, 144, 0.4);
-    }
-
-    @keyframes feature-glow {
-        0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
-        100% { box-shadow: 0 8px 25px rgba(var(--badge-color-rgb, 255, 50, 100), 0.25); }
-    }
-
-    .mobile-timeline-active .featured-tag {
-        position: absolute;
-        top: -10px;
-        left: 20px;
-        background: var(--accent, #f3c677);
-        color: rgba(0, 0, 0, 0.8);
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        transform: rotate(-2deg);
-    }
-
-    /* Mobile filter styles */
     .mobile-filter-bar {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 8px;
-        margin: 0 0 10px 0;
+        margin-bottom: 20px;
         padding: 10px;
-        border-radius: 8px;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        margin: 0 0 10px 0 !important;
-        padding: 10px !important;
+        border-radius: 12px;
     }
-    
+
     .mobile-filter-btn {
-        background: rgba(25, 25, 40, 0.8);
+        background: rgba(30, 30, 45, 0.8);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--text-color, #e6e6f0);
-        padding: 6px 12px;
-        border-radius: 15px;
-        font-size: 0.85rem;
+        color: #e6e6f0;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85em;
         cursor: pointer;
-        transition: all 0.25s;
-        display: flex;
-        align-items: center;
-        gap: 5px;
+        transition: all 0.3s ease;
     }
-    
+
     .mobile-filter-btn.active {
-        background: var(--primary, #ff3264);
+        background: var(--filter-color, #ff3264);
         color: white;
-        box-shadow: 0 0 10px rgba(255, 50, 100, 0.5);
+        border-color: var(--filter-color, #ff3264);
     }
     
+    .mobile-filter-btn.active[data-filter="all"] {
+        background: #ff3264;
+        border-color: #ff3264;
+    }
+
     .mobile-filter-btn:hover {
-        transform: translateY(-2px);
+        background: rgba(255, 50, 100, 0.1);
+        border-color: rgba(255, 50, 100, 0.3);
     }
 
-    /* Timeline navigation (hidden on mobile) */
     .timeline-navigation {
-        display: none !important;
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-timeline-wrapper {
+        padding-left: 30px;
+        padding-right: 10px;
     }
 
-    /* Timeline Entries - Continuous Scroll */
-    .mobile-timeline-active .timeline-entries {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        padding-bottom: 40px;
-    }
-    
-    /* Remove any animation delays that might be set for pagination */
-    .mobile-timeline-active .timeline-entry {
-        animation: none !important;
-        opacity: 1 !important;
-        transform: none !important;
-        transition: opacity 0.3s, transform 0.3s !important;
-    }
-    
-    /* Smooth hiding/showing for filtering */
-    .mobile-timeline-active .timeline-entry[style*="display: none"] {
-        height: 0;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        opacity: 0;
-    }
-    
-    /* Make the track line extend to fit all content */
-    .mobile-timeline-active .timeline-track {
-        height: 100% !important;
+    .mobile-timeline-track {
+        left: 15px;
     }
 
-    /* Completely hide SVG elements in mobile view */
-    .timeline-container.mobile-timeline-active .timeline-path,
-    .timeline-container.mobile-timeline-active .timeline-svg {
-        display: none !important;
-        height: 0 !important;
-        min-height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-    }
-    
-    /* Force timeline container to proper sizing */
-    .timeline-container.mobile-timeline-active {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        min-height: auto !important;
-        height: auto !important;
-    }
-    
-    /* Ensure filter bar is at the very top */
-    .mobile-filter-bar {
-        margin-top: 0 !important;
-        margin-bottom: 10px !important;
-        position: relative !important;
-        top: 0 !important;
-    }
-    
-    /* Ensure entries appear immediately after filter */
-    .timeline-entries {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-    }
-    
-    /* First entry should have no top margin */
-    .timeline-entry:first-child {
-        margin-top: 0 !important;
-    }
-
-    /* Adjust card layout without description */
-    .mobile-timeline-active .entry-card {
-        padding-bottom: 15px;
-    }
-    
-    /* Remove margin from card footer since there's no description above it */
-    .mobile-timeline-active .card-footer {
-        margin-top: 10px;
-    }
-    
-    /* Adjust spacing for card header since no description follows */
-    .mobile-timeline-active .card-header {
+    .mobile-timeline-entry {
+        padding: 15px;
         margin-bottom: 15px;
+    }
+
+    .mobile-timeline-entry::before {
+        left: -25px;
+        width: 10px;
+        height: 10px;
+    }
+
+    .mobile-timeline-entry::after {
+        left: -20px;
+        width: 15px;
+    }
+
+    .mobile-entry-title {
+        font-size: 1.1em;
+    }
+
+    .mobile-entry-description {
+        font-size: 0.9em;
+    }
+
+    .mobile-filter-bar {
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .mobile-filter-btn {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 360px) {
+    .mobile-timeline-wrapper {
+        padding-left: 25px;
+        padding-right: 8px;
+    }
+
+    .mobile-timeline-track {
+        left: 12px;
+    }
+
+    .mobile-timeline-entry {
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    .mobile-entry-title {
+        font-size: 1em;
+    }
+
+    .mobile-entry-company {
+        font-size: 0.9em;
+    }
+
+    .mobile-entry-description {
+        font-size: 0.85em;
+        margin-bottom: 12px;
+    }
+
+    .mobile-entry-button {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+
+    .mobile-filter-btn {
+        padding: 5px 10px;
+        font-size: 0.75em;
     }
 }
 
