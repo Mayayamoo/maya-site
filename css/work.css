@@ -881,6 +881,12 @@ nav h1 a {
 
     .menu-toggle {
         display: block;
+        z-index: 1002;
+    }
+    
+    /* Ensure proper mobile content visibility */
+    body {
+        overflow-x: hidden;
     }
 
     nav {
@@ -894,8 +900,10 @@ nav h1 a {
         padding-top: 60px;
         border-right: none;
         background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
         overflow-y: auto;
         transition: transform 0.3s ease;
+        z-index: 1001;
     }
     
     nav.active {
@@ -920,127 +928,8 @@ nav h1 a {
 
     .main-content {
         margin-left: 0;
-        padding: 20px 10px 20px !important;
+        padding: 40px 10px 20px;
         overflow-x: hidden;
-    }
-
-    .detail-title {
-        font-size: 1.4em;
-    }
-
-    .detail-date {
-        font-style: italic;
-    }
-    
-    .timeline-navigation {
-        flex-direction: column;
-    }
-    
-    .timeline-progress-container {
-        width: 100%;
-        max-width: none;
-    }
-    
-    .detail-content {
-        gap: 20px;
-    }
-    
-    .detail-header-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap:10px;
-    }
-
-    .timeline-minimap-container {
-        right: 8px;
-        bottom: 8px;
-        width: 80px;
-        height: 112px;
-    }
-
-    .timeline-minimap-svg {
-        width: 80px;
-        height: 112px;
-    }
-
-    /* Ensure timeline path and nodes are visible and scaled correctly on mobile */
-    .timeline-container {
-        width: 100%;
-        height: auto;
-        overflow-x: hidden;
-        overflow-y: visible;
-        position: relative;
-        padding-bottom: 40px;
-    }
-
-    .timeline-path {
-        width: 100%;
-        max-width: 400px; /* Control the maximum width */
-        height: 3600px;
-        position: relative; /* Changed from absolute for better centering */
-    }
-
-    .timeline-svg {
-        width: 100%;
-        height: 3600px;
-        display: block;
-        overflow: visible;
-    }
-
-    .timeline-line {
-        stroke-width: 4;
-    }
-
-    .timeline-dot {
-        width: 14px;
-        height: 14px;
-        border-width: 2px;
-    }
-
-    .node-connector {
-        stroke-width: 2;
-    }
-    
-    .timeline-node {
-        width: 110px !important;
-        height: 110px !important;
-        font-size: 0.85em;
-    }
-
-    /* Fix mobile timeline container spacing */
-    .timeline-container {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-    }
-    
-    /* Reduce main content top padding */
-    .main-content {
-        margin-left: 0;
-        padding: 20px 10px 20px !important;
-        overflow-x: hidden;
-    }
-    
-    /* Reduce space after title */
-    .title-glow, .subtitle {
-        margin-bottom: 10px !important;
-    }
-    
-    /* Timeline container spacing reset */
-    .timeline-container {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-        margin-bottom: 20px !important;
-    }
-    
-    /* Remove potential extra space from SVG */
-    .timeline-svg {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-    }
-    
-    /* Ensure mobile navigation doesn't add space */
-    .timeline-navigation {
-        margin-top: 10px !important;
     }
 
     .timeline-detail {
@@ -1076,6 +965,7 @@ nav h1 a {
         margin: 0;
         height: auto;
         overflow: visible;
+        transform: none !important;
     }
 
     .timeline-path,
@@ -1083,7 +973,7 @@ nav h1 a {
     .timeline-node,
     .timeline-dot,
     .node-connector {
-        display: none;
+        display: none !important;
     }
 
     .mobile-timeline-wrapper {
