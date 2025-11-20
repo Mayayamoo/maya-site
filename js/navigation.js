@@ -4,26 +4,24 @@ function loadNavigation() { //add <li><a href="arts">Movies, Music and Art</a></
         <nav>
             <h1><a href="index">Maya Luna</a></h1>
             <ul>
-                <li><a href="about">About</a></li>
                 <li><a href="https://progressivebeacon.substack.com/">Blog</a></li>
                 <li class="dropdown">
-                    <button class="dropbtn">Work + Projects</button>
+                    <button class="dropbtn">work + projects</button>
                     <div class="dropdown-content">
-                        <a href="endeavours">Timeline</a>
-                        <a href="Contract">Contract</a>
+                        <a href="endeavours">timeline</a>
+                        <a href="Contract">contract</a>
                     </div> 
                 </li>                             
-                <li><a href="https://x.com/envisionedluna">Twitter</a></li>
                 <li><a href="https://www.guidedtrack.com/programs/lcf9n8s/run">Date me</a></li>
                 <li><a href="https://github.com/Mayayamoo">github</a></li>
                 <li><a href="https://throne.com/mayaluna">Wishlist</a></li>
                 <li><a href="https://discord.gg/P9TJzQD44A">Discord</a></li>
                 <li class="dropdown">
-                    <button class="dropbtn">Other socials</button>
+                    <button class="dropbtn">other socials</button>
                     <div class="dropdown-content">
-                        <a href="instagram">https://instagram.com/realmayaluna</a>
-                        <a href="bluesky">https://bsky.app/profile/realmayaluna.bsky.social</a>
-                        <a href="X">https://x.com/envisionedluna</a>
+                        <a href="https://instagram.com/realmayaluna">instagram</a>
+                        <a href="https://bsky.app/profile/realmayaluna.bsky.social">bluesky</a>
+                        <a href="https://x.com/envisionedluna">x</a>
                 <li><a href="contact">Contact</a></li>
             </ul>
         </nav>

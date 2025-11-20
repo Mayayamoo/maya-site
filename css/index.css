@@ -187,6 +187,12 @@
     .main-content {
         padding: 80px 15px 20px !important;
     }
+
+    .index-body {
+        font-size: 1em !important;
+        padding-right: 15px !important;
+    }
+    
     
     .hero-section {
         padding: 0;
@@ -260,6 +266,7 @@
 @media (max-width: 480px) {
     .main-content {
         padding: 70px 10px 15px !important;
+        font-size: 1em
     }
     
     .hero-section {
@@ -428,7 +435,7 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 30px;
     }
-    
+
     .featured-card {
         min-height: 350px;
     }
@@ -453,4 +460,5 @@
     .featured-grid {
         gap: 40px;
     }
+    
 }
