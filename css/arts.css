@@ -1,0 +1,108 @@
+.film-diary {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 30px;
+}
+
+.film-entry {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 50, 100, 0.15);
+}
+
+.film-entry:last-child {
+    border-bottom: none;
+}
+
+.film-entry > a {
+    flex-shrink: 0;
+}
+
+.film-entry img {
+    width: 100px;
+    height: auto;
+    border: 1px solid rgba(255, 50, 100, 0.4);
+    border-radius: 4px;
+    margin: 0;
+    display: block;
+    max-width: none;
+}
+
+.film-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.film-info h3 {
+    margin: 0 0 6px;
+    font-size: 1.1em;
+    line-height: 1.3;
+}
+
+.film-info h3 a {
+    color: #f0f0f0;
+    text-decoration: none;
+}
+
+.film-info h3 a:hover {
+    color: rgb(0, 212, 249);
+}
+
+.film-year {
+    color: #888;
+    font-weight: normal;
+    font-size: 0.85em;
+}
+
+.film-rating {
+    color: #00d4f9;
+    font-size: 1.1em;
+    margin-bottom: 4px;
+    letter-spacing: 2px;
+}
+
+.film-date {
+    color: #777;
+    font-size: 0.8em;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.film-review {
+    color: #ccc !important;
+    font-size: 0.95em !important;
+    line-height: 1.6 !important;
+    margin-bottom: 0 !important;
+}
+
+.loading-msg {
+    color: #777 !important;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .film-diary {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .film-entry {
+        gap: 12px;
+        padding: 15px 0;
+    }
+
+    .film-entry img {
+        width: 70px;
+    }
+
+    .film-info h3 {
+        font-size: 0.95em;
+    }
+
+    .film-review {
+        font-size: 0.85em !important;
+    }
+}

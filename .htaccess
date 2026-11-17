@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Bookkeeping file written by the GitHub auto-publish; not for visitors
+RewriteRule ^\.ftp-deploy-sync-state\.json$ - [F,L]
+
+# mayaluna.us/movies -> the Movie Masterdoc (hosted on Vercel)
+RewriteRule ^movies/?$ https://movies.mayaluna.us/ [R=302,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteCond %{REQUEST_FILENAME}\.html -f
+
+RewriteRule ^([^/]+)/?$ $1.html [L]

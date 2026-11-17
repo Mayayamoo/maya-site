@@ -1,0 +1,46 @@
+name: Publish mayaluna.us
+
+# Every push to main uploads the changed files to the KnownHost server
+# (the deploy@mayaluna.us FTP account, whose home is public_html).
+# Can also be run by hand: GitHub -> Actions -> Publish mayaluna.us -> Run workflow.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Upload changed files over FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          # The server's TLS certificate is issued to this name (it is the same
+          # machine as mayaluna.us), so connecting by it keeps the certificate check on.
+          server: cp47-ga.privatesystems.net
+          protocol: ftps
+          port: 21
+          security: strict
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: ./
+          # Files that never go to the website. Files already on the server that
+          # this workflow didn't upload (housing.html, .well-known/) are left alone.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .claude/**
+            .env
+            build-content.js
+            template.html
+            package.json
+            package-lock.json
+            LICENSE

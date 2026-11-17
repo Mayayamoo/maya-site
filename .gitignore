@@ -1,3 +1,6 @@
-.htaccess
-/timelinedata
-/assets
+.env
+node_modules/
+package-lock.json
+package.json
+LICENSE
+.claude/

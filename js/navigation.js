@@ -1,4 +1,4 @@
-function loadNavigation() { //add <li><a href="arts">Movies, Music and Art</a></li> later
+function loadNavigation() {
     const navigationHTML = `
         <button class="menu-toggle">☰</button>
         <nav>
@@ -13,6 +13,8 @@ function loadNavigation() { //add <li><a href="arts">Movies, Music and Art</a></
                     </div> 
                 </li>                             
                 <li><a href="https://www.guidedtrack.com/programs/lcf9n8s/run">Date me</a></li>
+                <li><a href="arts">Film & the arts</a></li>
+                <li><a href="https://movies.mayaluna.us/">Movie Masterdoc</a></li>
                 <li><a href="https://github.com/Mayayamoo">github</a></li>
                 <li><a href="https://throne.com/mayaluna">Wishlist</a></li>
                 <li><a href="https://discord.gg/P9TJzQD44A">Discord</a></li>
@@ -22,14 +24,14 @@ function loadNavigation() { //add <li><a href="arts">Movies, Music and Art</a></
                         <a href="https://instagram.com/realmayaluna">instagram</a>
                         <a href="https://bsky.app/profile/realmayaluna.bsky.social">bluesky</a>
                         <a href="https://x.com/envisionedluna">x</a>
+                    </div>
+                </li>
                 <li><a href="contact">Contact</a></li>
             </ul>
         </nav>
     `;
     
     document.body.insertAdjacentHTML('afterbegin', navigationHTML);
-    
-    // Initialize navigation functionality after DOM insertion
     initializeNavigation();
 }
 
@@ -64,13 +66,11 @@ function initializeNavigation() {
         });
     });
 
-    // Dropdown functionality for all dropdowns in nav
     document.querySelectorAll('.dropbtn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
-            // Close other dropdowns
             document.querySelectorAll('.dropdown-content').forEach(menu => {
                 if (menu !== this.nextElementSibling) {
                     menu.classList.remove('show');
@@ -84,7 +84,6 @@ function initializeNavigation() {
         });
     });
 
-    // Close dropdowns when clicking outside
     window.addEventListener('click', function(e) {
         if (!e.target.closest('.dropdown')) {
             document.querySelectorAll('.dropdown-content').forEach(menu => {
