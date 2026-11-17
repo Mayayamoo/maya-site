@@ -10,11 +10,11 @@ function loadNavigation() {
                     <div class="dropdown-content">
                         <a href="endeavours">timeline</a>
                         <a href="Contract">contract</a>
-                    </div> 
+                        <a href="https://movies.mayaluna.us/">movie masterdoc</a>
+                    </div>
                 </li>                             
                 <li><a href="https://www.guidedtrack.com/programs/lcf9n8s/run">Date me</a></li>
                 <li><a href="arts">Film & the arts</a></li>
-                <li><a href="https://movies.mayaluna.us/">Movie Masterdoc</a></li>
                 <li><a href="https://github.com/Mayayamoo">github</a></li>
                 <li><a href="https://throne.com/mayaluna">Wishlist</a></li>
                 <li><a href="https://discord.gg/P9TJzQD44A">Discord</a></li>
